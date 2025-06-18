@@ -2,16 +2,16 @@
 "use client";
 
 import Link from 'next/link';
-import { ShoppingCart, UserCircle, Search, Menu as MenuIcon, LogIn, LayoutDashboard, Home, Package, Info, X, ChevronDown } from 'lucide-react';
+import { ShoppingCart, UserCircle, Search, Menu as MenuIcon, LogIn, LayoutDashboard, Home, Package, Info, X, ChevronDown, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/context/CartContext';
 import { useAuth } from '@/context/AuthContext';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { usePathname, useRouter } from 'next/navigation';
 import SearchBar from '@/components/SearchBar';
-import { mockCategories, mainDropdownCategories } from "@/data/mockData"; // For category menu
-import type { Category as TopCategoryType, DropdownCategory } from "@/types"; // For category menu
+import { mockCategories, mainDropdownCategories } from "@/data/mockData";
+import type { Category as TopCategoryType, DropdownCategory } from "@/types";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,7 +19,12 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuPortal
 } from "@/components/ui/dropdown-menu";
+import Image from 'next/image';
 
 
 const NavLink = ({ href, children, onClick }: { href: string; children: React.ReactNode; onClick?: () => void }) => {
@@ -47,10 +52,8 @@ export default function Header() {
   const router = useRouter();
   const pathname = usePathname();
 
-  // State for category menu
   const [mainMenuOpen, setMainMenuOpen] = useState(false);
-  const [openSubmenus, setOpenSubmenus] = useState<Record<string, boolean>>({});
-
+  
   useEffect(() => {
     setCartItemCount(getCartItemCount());
   }, [getCartItemCount]);
@@ -78,13 +81,12 @@ export default function Header() {
 
   const handleMainMenuLeave = () => {
     setMainMenuOpen(false);
-    setOpenSubmenus({}); // Close all submenus when main menu closes
   };
-
+  
   const handleMenuItemClick = () => {
     setMainMenuOpen(false);
-    setOpenSubmenus({});
   };
+
 
   return (
     <header className="sticky top-0 z-50 w-full">
@@ -92,14 +94,15 @@ export default function Header() {
       <div className="bg-background border-b border-border/40">
         <div className="container mx-auto flex h-[88px] items-center justify-between px-4 space-x-4">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2 flex-shrink-0" aria-label="DarkStore Suplementos Home">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-10 w-10 text-primary">
-              <path d="M12 2L2 7V17L12 22L22 17V7L12 2ZM19.535 7.595L12 11.655L4.465 7.595L12 3.535L19.535 7.595Z" />
-            </svg>
-            <div className="flex flex-col">
-              <span className="font-headline text-2xl font-bold text-white leading-tight">DarkStore</span>
-              <span className="text-[0.6rem] font-semibold text-gray-300 tracking-wider uppercase">SUPLEMENTOS</span>
-            </div>
+          <Link href="/" className="flex items-center flex-shrink-0" aria-label="DarkStore Suplementos Home">
+            <Image
+              src="/logo.png" // Assumindo que o logo está em public/logo.png
+              alt="DarkStore Suplementos Logo"
+              width={180} // Ajuste a largura conforme necessário
+              height={40} // Ajuste a altura conforme necessário
+              className="object-contain"
+              priority // Para carregar o logo mais rápido
+            />
           </Link>
 
           {/* Search Bar - takes up most space on desktop */}
@@ -163,14 +166,14 @@ export default function Header() {
               </SheetTrigger>
               <SheetContent side="right" className="w-[300px] sm:w-[400px] bg-background p-6 flex flex-col">
                 <div className="flex justify-between items-center mb-6">
-                  <Link href="/" className="flex items-center space-x-2" onClick={closeSheet}>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-8 w-8 text-primary">
-                      <path d="M12 2L2 7V17L12 22L22 17V7L12 2ZM19.535 7.595L12 11.655L4.465 7.595L12 3.535L19.535 7.595Z" />
-                    </svg>
-                    <div className="flex flex-col">
-                      <span className="font-headline text-xl font-bold text-white">DarkStore</span>
-                       <span className="text-[0.5rem] font-semibold text-gray-300 tracking-wider uppercase">SUPLEMENTOS</span>
-                    </div>
+                  <Link href="/" className="flex items-center" onClick={closeSheet}>
+                     <Image
+                        src="/logo.png" // Logo para o menu mobile
+                        alt="DarkStore Suplementos Logo"
+                        width={150}
+                        height={33}
+                        className="object-contain"
+                      />
                   </Link>
                   <SheetTrigger asChild>
                     <Button variant="ghost" size="icon" aria-label="Fechar menu" className="text-primary">
@@ -239,7 +242,6 @@ export default function Header() {
                   <Button
                     className="uppercase text-xs sm:text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary/90 rounded-md px-3 sm:px-4 py-2 sm:py-2.5 h-auto flex items-center whitespace-nowrap"
                     onMouseEnter={handleMainMenuEnter}
-                    onClick={() => setMainMenuOpen(prev => !prev)} 
                   >
                     <MenuIcon className="h-4 w-4 mr-2" />
                     CATEGORIAS
@@ -248,7 +250,7 @@ export default function Header() {
                 <DropdownMenuContent
                   align="start"
                   className="w-64 bg-background border-border shadow-lg"
-                  onMouseEnter={handleMainMenuEnter} 
+                  onMouseEnter={handleMainMenuEnter} // Manter o menu aberto se o mouse entrar no conteúdo
                 >
                   <DropdownMenuLabel className="font-semibold text-foreground">Principais Categorias</DropdownMenuLabel>
                   <DropdownMenuSeparator className="bg-border/50" />
@@ -266,7 +268,7 @@ export default function Header() {
               </DropdownMenu>
             </div>
 
-            <div className="flex-1 flex justify-center items-center overflow-x-auto whitespace-nowrap space-x-1 md:space-x-2 min-w-0">
+            <div className="flex-1 flex justify-start items-center overflow-x-auto whitespace-nowrap space-x-1 md:space-x-2 min-w-0">
               {topLevelCategories.map((category: TopCategoryType) => {
                 const isComboOffer = category.id === "catComboOffers";
                 const buttonClassName = `uppercase text-xs sm:text-sm font-semibold rounded-full px-4 sm:px-5 py-1.5 sm:py-2 h-auto whitespace-nowrap flex items-center transition-all duration-150 ease-in-out ${
@@ -296,4 +298,3 @@ export default function Header() {
     </header>
   );
 }
-
