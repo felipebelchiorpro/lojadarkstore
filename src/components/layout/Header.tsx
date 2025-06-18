@@ -41,18 +41,19 @@ const NavLink = ({ href, children, onClick }: { href: string; children: React.Re
 
 export default function Header() {
   const { getCartItemCount } = useCart();
-  const { isAuthenticated, logout, user } = useAuth(); // Added user
+  const { isAuthenticated, logout, user } = useAuth();
   const [cartItemCount, setCartItemCount] = useState(0);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
 
-  // State for category menu (moved from HomePage)
+  // State for category menu
   const [mainMenuOpen, setMainMenuOpen] = useState(false);
+  const [openSubmenus, setOpenSubmenus] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     setCartItemCount(getCartItemCount());
-  }, [getCartItemCount]); // Removed isAuthenticated from deps, cart count independent of auth
+  }, [getCartItemCount]);
 
   const mainSiteLinks = [
     { href: '/', label: 'Home', icon: <Home className="mr-2 h-4 w-4" /> },
@@ -71,18 +72,32 @@ export default function Header() {
 
   const topLevelCategories = mockCategories;
 
+  const handleMainMenuEnter = () => {
+    setMainMenuOpen(true);
+  };
+
+  const handleMainMenuLeave = () => {
+    setMainMenuOpen(false);
+    setOpenSubmenus({}); // Close all submenus when main menu closes
+  };
+
+  const handleMenuItemClick = () => {
+    setMainMenuOpen(false);
+    setOpenSubmenus({});
+  };
+
   return (
     <header className="sticky top-0 z-50 w-full">
       {/* Upper Header Part (Logo, Search, Auth/Cart) */}
       <div className="bg-background border-b border-border/40">
         <div className="container mx-auto flex h-[88px] items-center justify-between px-4 space-x-4">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2 flex-shrink-0" aria-label="SportZone Suplementos Home">
+          <Link href="/" className="flex items-center space-x-2 flex-shrink-0" aria-label="DarkStore Suplementos Home">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-10 w-10 text-primary">
               <path d="M12 2L2 7V17L12 22L22 17V7L12 2ZM19.535 7.595L12 11.655L4.465 7.595L12 3.535L19.535 7.595Z" />
             </svg>
             <div className="flex flex-col">
-              <span className="font-headline text-2xl font-bold text-white leading-tight">SportZone</span>
+              <span className="font-headline text-2xl font-bold text-white leading-tight">DarkStore</span>
               <span className="text-[0.6rem] font-semibold text-gray-300 tracking-wider uppercase">SUPLEMENTOS</span>
             </div>
           </Link>
@@ -153,7 +168,7 @@ export default function Header() {
                       <path d="M12 2L2 7V17L12 22L22 17V7L12 2ZM19.535 7.595L12 11.655L4.465 7.595L12 3.535L19.535 7.595Z" />
                     </svg>
                     <div className="flex flex-col">
-                      <span className="font-headline text-xl font-bold text-white">SportZone</span>
+                      <span className="font-headline text-xl font-bold text-white">DarkStore</span>
                        <span className="text-[0.5rem] font-semibold text-gray-300 tracking-wider uppercase">SUPLEMENTOS</span>
                     </div>
                   </Link>
@@ -215,41 +230,40 @@ export default function Header() {
       <nav aria-labelledby="category-menu-heading" className="bg-card py-2.5 border-b border-border/40">
         <h2 id="category-menu-heading" className="sr-only">Navegar por Categorias</h2>
         <div className="container mx-auto px-2 flex items-center space-x-2">
-            <div
-                onMouseLeave={() => { setMainMenuOpen(false); }}
-                className="relative"
+           <div
+              className="relative"
+              onMouseLeave={handleMainMenuLeave}
             >
-                <DropdownMenu open={mainMenuOpen} onOpenChange={setMainMenuOpen}>
-                    <DropdownMenuTrigger asChild>
-                        <Button
-                            className="uppercase text-xs sm:text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary/90 rounded-md px-3 sm:px-4 py-2 sm:py-2.5 h-auto flex items-center whitespace-nowrap"
-                            onMouseEnter={() => setMainMenuOpen(true)}
-                            onClick={() => setMainMenuOpen(prev => !prev)} // Toggle on click for touch devices
-                        >
-                            <MenuIcon className="h-4 w-4 mr-2" />
-                            CATEGORIAS
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent
-                        align="start"
-                        className="w-64 bg-background border-border shadow-lg"
-                        onMouseEnter={() => setMainMenuOpen(true)} // Keep open if mouse re-enters
-                        onMouseLeave={() => setMainMenuOpen(false)} // Close if mouse leaves content
-                    >
-                        <DropdownMenuLabel className="font-semibold text-foreground">Principais Categorias</DropdownMenuLabel>
-                        <DropdownMenuSeparator className="bg-border/50" />
-                        {mainDropdownCategories.map((mainCat: DropdownCategory) => (
-                            <Link key={mainCat.id} href={mainCat.href || "/products"} passHref>
-                                <DropdownMenuItem 
-                                    className="text-foreground hover:bg-muted focus:bg-muted"
-                                    onClick={() => {setMainMenuOpen(false);}}
-                                >
-                                    {mainCat.name}
-                                </DropdownMenuItem>
-                            </Link>
-                        ))}
-                    </DropdownMenuContent>
-                </DropdownMenu>
+              <DropdownMenu open={mainMenuOpen} onOpenChange={setMainMenuOpen}>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    className="uppercase text-xs sm:text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary/90 rounded-md px-3 sm:px-4 py-2 sm:py-2.5 h-auto flex items-center whitespace-nowrap"
+                    onMouseEnter={handleMainMenuEnter}
+                    onClick={() => setMainMenuOpen(prev => !prev)} 
+                  >
+                    <MenuIcon className="h-4 w-4 mr-2" />
+                    CATEGORIAS
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="start"
+                  className="w-64 bg-background border-border shadow-lg"
+                  onMouseEnter={handleMainMenuEnter} 
+                >
+                  <DropdownMenuLabel className="font-semibold text-foreground">Principais Categorias</DropdownMenuLabel>
+                  <DropdownMenuSeparator className="bg-border/50" />
+                  {mainDropdownCategories.map((mainCat: DropdownCategory) => (
+                    <Link key={mainCat.id} href={mainCat.href || `/products?category=${encodeURIComponent(mainCat.name)}`} passHref>
+                      <DropdownMenuItem
+                        className="text-foreground hover:bg-muted focus:bg-muted"
+                        onClick={handleMenuItemClick}
+                      >
+                        {mainCat.name}
+                      </DropdownMenuItem>
+                    </Link>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
 
             <div className="flex-1 flex justify-center items-center overflow-x-auto whitespace-nowrap space-x-1 md:space-x-2 min-w-0">
@@ -282,3 +296,4 @@ export default function Header() {
     </header>
   );
 }
+
