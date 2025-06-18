@@ -1,3 +1,4 @@
+
 "use client";
 
 import * as React from "react";
@@ -31,7 +32,7 @@ export function Banner({ promotions }: BannerProps) {
   return (
     <Carousel
       plugins={[plugin.current]}
-      className="w-full rounded-lg overflow-hidden shadow-xl"
+      className="w-full rounded-lg overflow-hidden border border-border/40 shadow-none"
       onMouseEnter={plugin.current.stop}
       onMouseLeave={plugin.current.reset}
       opts={{ loop: true }}

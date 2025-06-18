@@ -1,3 +1,4 @@
+
 "use client";
 
 import Image from 'next/image';
@@ -26,7 +27,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   };
 
   return (
-    <Card className="flex flex-col h-full overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 bg-card">
+    <Card className="flex flex-col h-full overflow-hidden rounded-lg bg-card border border-border/40 hover:border-border/70 shadow-none transition-colors duration-300">
       <Link href={`/products/${product.id}`} passHref className="block">
         <CardHeader className="p-0">
           <div className="aspect-[4/3] relative w-full overflow-hidden">

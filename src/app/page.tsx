@@ -33,7 +33,7 @@ export default function HomePage() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
           {featuredCategories.map((category: Category) => (
             <Link key={category.id} href={`/products?category=${encodeURIComponent(category.name)}`} passHref>
-              <div className="group relative aspect-video overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 cursor-pointer">
+              <div className="group relative aspect-video overflow-hidden rounded-lg border border-border/40 hover:border-border/70 shadow-none transition-all duration-300 cursor-pointer">
                 {category.imageUrl && (
                   <Image
                     src={category.imageUrl}
@@ -45,7 +45,7 @@ export default function HomePage() {
                   />
                 )}
                 <div className="absolute inset-0 bg-black/50 flex items-center justify-center p-2">
-                  <h3 className="font-headline text-lg md:text-xl font-semibold text-white text-center">{category.name}</h3>
+                  <h3 className="font-headline text-lg md:text-xl font-bold text-white text-center">{category.name}</h3>
                 </div>
               </div>
             </Link>
@@ -69,7 +69,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section aria-labelledby="call-to-action-heading" className="py-12 bg-card rounded-lg shadow-lg">
+      <section aria-labelledby="call-to-action-heading" className="py-12 bg-card rounded-lg border border-border/40 shadow-none">
         <div className="container mx-auto text-center">
           <h2 id="call-to-action-heading" className="font-headline text-3xl font-semibold text-primary mb-4 uppercase">Pronto para Elevar seu Treino?</h2>
           <p className="text-lg text-muted-foreground mb-8 max-w-xl mx-auto">
