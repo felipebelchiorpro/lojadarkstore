@@ -1,4 +1,5 @@
 
+
 export interface Product {
   id: string;
   name: string;
@@ -53,4 +54,12 @@ export interface Promotion {
   description: string;
   imageUrl: string;
   link: string; // e.g., link to a category or product
+}
+
+export interface DropdownCategory {
+  id: string;
+  name: string;
+  href?: string;
+  hasSubmenu?: boolean;
+  subItems?: Array<{ id: string; name: string; href: string }>;
 }

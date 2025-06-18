@@ -1,4 +1,5 @@
-import type { Product, Category, Promotion, Order, Review } from '@/types';
+
+import type { Product, Category, Promotion, Order, Review, DropdownCategory } from '@/types';
 
 export const mockReviews: Review[] = [
   { id: 'r1', author: 'Carlos S.', rating: 5, comment: 'Excelente produto, recomendo!', date: '2024-07-15' },
@@ -58,7 +59,7 @@ export const mockProducts: Product[] = [
     name: 'Pré-Treino Insano (300g)',
     description: 'Energia explosiva e foco para treinos intensos. Sabor Frutas Vermelhas.',
     price: 149.90,
-    category: 'ENDURANCE', // Updated category (example, Pré-Treinos could also be its own)
+    category: 'Pré Treino', 
     brand: 'Dark Performance',
     imageUrl: 'https://placehold.co/600x400.png',
     stock: 40,
@@ -70,7 +71,7 @@ export const mockProducts: Product[] = [
     name: 'Omega 3 (120 caps)',
     description: 'Óleo de peixe concentrado, rico em EPA e DHA, para saúde cardiovascular e cerebral.',
     price: 89.90,
-    category: 'SAÚDE', // Updated category
+    category: 'Vitaminas e Saude', 
     brand: 'Dark Vitality',
     imageUrl: 'https://placehold.co/600x400.png',
     stock: 60,
@@ -81,7 +82,7 @@ export const mockProducts: Product[] = [
     name: 'Barra de Proteína (Caixa com 12)',
     description: 'Lanche proteico prático e delicioso para qualquer hora do dia. Sabor Chocolate.',
     price: 99.90,
-    category: 'GANHO DE MASSA', // Example category
+    category: 'Proteínas', 
     brand: 'Dark Nutrition',
     imageUrl: 'https://placehold.co/600x400.png',
     stock: 25,
@@ -89,15 +90,73 @@ export const mockProducts: Product[] = [
   },
 ];
 
+// For the horizontal top bar
 export const mockCategories: Category[] = [
   { id: 'catEndurance', name: 'ENDURANCE', imageUrl: 'https://placehold.co/800x400.png' },
   { id: 'catGanhoMassa', name: 'GANHO DE MASSA', imageUrl: 'https://placehold.co/800x400.png' },
   { id: 'catEmagrecimento', name: 'EMAGRECIMENTO', imageUrl: 'https://placehold.co/800x400.png' },
   { id: 'catDefinicao', name: 'DEFINIÇÃO', imageUrl: 'https://placehold.co/800x400.png' },
   { id: 'catSaude', name: 'SAÚDE', imageUrl: 'https://placehold.co/800x400.png' },
-  { id: 'catComboOffers', name: 'COMBO E OFERTAS', imageUrl: 'https://placehold.co/800x400.png' },
+  { id: 'catComboOffers', name: 'COMBOS E OFERTAS', imageUrl: 'https://placehold.co/800x400.png' },
   { id: 'catLojasFisicas', name: 'LOJAS FÍSICAS', imageUrl: 'https://placehold.co/800x400.png' },
   { id: 'catAtacado', name: 'ATACADO', imageUrl: 'https://placehold.co/800x400.png' },
+];
+
+// For the main "CATEGORIAS" dropdown
+export const mainDropdownCategories: DropdownCategory[] = [
+  { 
+    id: 'dd-proteinas', name: 'Proteínas', hasSubmenu: true, 
+    href: '/products?category=Proteínas',
+    subItems: [
+      { id: 'sub-whey', name: 'Whey Protein', href: '/products?category=Proteínas&subcategory=Whey%20Protein' },
+      { id: 'sub-albumina', name: 'Albumina', href: '/products?category=Proteínas&subcategory=Albumina' },
+      { id: 'sub-caseina', name: 'Caseína', href: '/products?category=Proteínas&subcategory=Caseína' },
+      { id: 'sub-beef', name: 'Beef Protein', href: '/products?category=Proteínas&subcategory=Beef%20Protein' },
+    ]
+  },
+  { id: 'dd-creatina', name: 'Creatina', href: '/products?category=Creatina' },
+  { id: 'dd-pre-treino', name: 'Pré Treino', href: '/products?category=Pré%20Treino' },
+  { 
+    id: 'dd-aminoacidos', name: 'Aminoácidos', hasSubmenu: true, 
+    href: '/products?category=Aminoácidos',
+    subItems: [
+      { id: 'sub-bcaa', name: 'BCAA', href: '/products?category=Aminoácidos&subcategory=BCAA' },
+      { id: 'sub-glutamina', name: 'Glutamina', href: '/products?category=Aminoácidos&subcategory=Glutamina' },
+      { id: 'sub-arginina', name: 'Arginina', href: '/products?category=Aminoácidos&subcategory=Arginina' },
+    ]
+  },
+  { 
+    id: 'dd-vitaminas', name: 'Vitaminas e Saude', hasSubmenu: true, 
+    href: '/products?category=Vitaminas%20e%20Saude',
+    subItems: [
+      { id: 'sub-multivitaminico', name: 'Multivitamínicos', href: '/products?category=Vitaminas%20e%20Saude&subcategory=Multivitamínico' },
+      { id: 'sub-omega3', name: 'Ômega 3', href: '/products?category=Vitaminas%20e%20Saude&subcategory=Ômega%203' },
+      { id: 'sub-vitamina-d', name: 'Vitamina D', href: '/products?category=Vitaminas%20e%20Saude&subcategory=Vitamina%20D' },
+    ]
+  },
+  { id: 'dd-pasta-amendoim', name: 'Pasta de Amendoim', href: '/products?category=Pasta%20de%20Amendoim' },
+  { id: 'dd-hipercalorico', name: 'Hipercalórico', href: '/products?category=Hipercalórico' },
+  { 
+    id: 'dd-acessorios', name: 'Acessórios', hasSubmenu: true, 
+    href: '/products?category=Acessórios',
+    subItems: [
+      { id: 'sub-coqueteleira', name: 'Coqueteleiras', href: '/products?category=Acessórios&subcategory=Coqueteleira' },
+      { id: 'sub-luvas', name: 'Luvas de Treino', href: '/products?category=Acessórios&subcategory=Luvas' },
+      { id: 'sub-garrafas', name: 'Garrafas', href: '/products?category=Acessórios&subcategory=Garrafas' },
+    ]
+  },
+  { id: 'dd-lancamentos', name: 'Lançamentos', href: '/products?tag=lancamentos' },
+  { 
+    id: 'dd-objetivos', name: 'Objetivos', hasSubmenu: true, 
+    href: '/products', // General link, specific objectives filter
+    subItems: [
+      { id: 'sub-obj-ganho-massa', name: 'Ganho de Massa', href: '/products?objetivo=ganho-massa' },
+      { id: 'sub-obj-emagrecimento', name: 'Emagrecimento', href: '/products?objetivo=emagrecimento' },
+      { id: 'sub-obj-definicao', name: 'Definição', href: '/products?objetivo=definicao' },
+      { id: 'sub-obj-energia', name: 'Energia e Resistência', href: '/products?objetivo=energia' },
+    ]
+  },
+  // "Combos e Ofertas" and "Atacado" are in the horizontal bar, so not repeated here to avoid redundancy based on image interpretation.
 ];
 
 
