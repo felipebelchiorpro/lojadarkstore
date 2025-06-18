@@ -18,6 +18,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
+import InfoBar from '@/components/InfoBar'; // Import the new InfoBar component
 
 export default function HomePage() {
   const featuredProducts = mockProducts.slice(0, 8); // Ensure enough products for carousel
@@ -31,6 +32,9 @@ export default function HomePage() {
         <h2 id="banner-heading" className="sr-only">Promoções e Destaques</h2>
         <Banner promotions={mockPromotions} />
       </section>
+
+      {/* InfoBar section added below the banner */}
+      <InfoBar />
 
       <section aria-labelledby="featured-categories-heading">
         <div className="flex justify-between items-center mb-6">
