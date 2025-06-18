@@ -108,7 +108,7 @@ export default function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center flex-shrink-0" aria-label="DarkStore Suplementos Home">
             <Image
-              src="/logo.png" // Certifique-se que public/logo.png existe
+              src="/logo%20loja.png" 
               alt="DarkStore Suplementos Logo"
               width={180} 
               height={40} 
@@ -180,7 +180,7 @@ export default function Header() {
                 <div className="flex justify-between items-center mb-6">
                   <Link href="/" className="flex items-center" onClick={closeSheet}>
                      <Image
-                        src="/logo.png" // Certifique-se que public/logo.png existe
+                        src="/logo%20loja.png" 
                         alt="DarkStore Suplementos Logo"
                         width={150}
                         height={33}
