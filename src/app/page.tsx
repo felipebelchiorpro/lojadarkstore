@@ -19,8 +19,7 @@ export default function HomePage() {
       <section aria-labelledby="category-menu-heading" className="mb-8">
         <h2 id="category-menu-heading" className="sr-only">Navegar por Categorias</h2>
         <div className="bg-card py-3 border-b border-t border-border/40 shadow-none">
-          {/* A classe justify-center foi removida para reverter a centralização */}
-          <div className="container mx-auto flex items-center overflow-x-auto space-x-2 md:space-x-4 px-2"> 
+          <div className="container mx-auto flex justify-center items-center overflow-x-auto space-x-2 md:space-x-4 px-2"> 
             {topLevelCategories.map((category: Category) => (
               <Link
                 key={category.id}
