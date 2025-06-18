@@ -7,15 +7,38 @@ import { mockProducts, mockCategories, mockPromotions } from "@/data/mockData";
 import type { Product, Category } from "@/types";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Tag } from "lucide-react";
 import Image from "next/image";
 
 export default function HomePage() {
   const featuredProducts = mockProducts.slice(0, 4); // Show 4 featured products
-  const featuredCategories = mockCategories.slice(0, 4); // Show 4 featured categories
+  const topLevelCategories = mockCategories; // Using all categories for the top menu
 
   return (
     <div className="space-y-12">
+      <section aria-labelledby="category-menu-heading" className="mb-8">
+        <h2 id="category-menu-heading" className="sr-only">Navegar por Categorias</h2>
+        <div className="bg-card py-3 border-b border-t border-border/40 shadow-none">
+          <div className="container mx-auto flex items-center justify-center md:justify-start overflow-x-auto space-x-2 md:space-x-4 px-2">
+            {topLevelCategories.map((category: Category) => (
+              <Link
+                key={category.id}
+                href={`/products?category=${encodeURIComponent(category.name)}`}
+                passHref
+              >
+                <Button
+                  variant="ghost"
+                  className="text-sm font-medium text-muted-foreground hover:text-primary hover:bg-primary/10 px-3 py-1.5 h-auto whitespace-nowrap"
+                >
+                  <Tag className="mr-2 h-4 w-4 opacity-80" />
+                  {category.name}
+                </Button>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section aria-labelledby="banner-heading">
         <h2 id="banner-heading" className="sr-only">Promoções e Destaques</h2>
         <Banner promotions={mockPromotions} />
@@ -24,14 +47,15 @@ export default function HomePage() {
       <section aria-labelledby="featured-categories-heading">
         <div className="flex justify-between items-center mb-6">
           <h2 id="featured-categories-heading" className="font-headline text-3xl font-semibold text-foreground uppercase">Categorias em Destaque</h2>
-          <Link href="/products" passHref>
+          {/* Link para ver todas as categorias pode ser mantido ou removido se o menu superior for suficiente */}
+          {/* <Link href="/products" passHref>
             <Button variant="ghost" className="text-primary hover:text-primary/90">
               Ver Todas <ChevronRight className="ml-1 h-4 w-4" />
             </Button>
-          </Link>
+          </Link> */}
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-          {featuredCategories.map((category: Category) => (
+          {mockCategories.slice(0, 4).map((category: Category) => ( // Mostrando apenas 4 em destaque aqui
             <Link key={category.id} href={`/products?category=${encodeURIComponent(category.name)}`} passHref>
               <div className="group relative aspect-video overflow-hidden rounded-lg border border-border/40 hover:border-border/70 shadow-none transition-all duration-300 cursor-pointer">
                 {category.imageUrl && (
