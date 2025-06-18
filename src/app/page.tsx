@@ -28,9 +28,12 @@ export default function HomePage() {
               >
                 <Button
                   variant="ghost"
-                  className="text-sm font-medium text-muted-foreground hover:text-primary hover:bg-primary/10 px-3 py-1.5 h-auto whitespace-nowrap"
+                  className="text-sm font-medium text-muted-foreground hover:text-primary hover:bg-primary/10 px-3 py-1.5 h-auto whitespace-nowrap flex items-center"
                 >
                   {category.name}
+                  {category.name === "Ofertas" && (
+                    <span className="ml-1.5 inline-block h-2 w-2 rounded-full bg-primary animate-pulse"></span>
+                  )}
                 </Button>
               </Link>
             ))}
@@ -54,7 +57,7 @@ export default function HomePage() {
           </Link> */}
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-          {mockCategories.slice(0, 4).map((category: Category) => ( // Mostrando apenas 4 em destaque aqui
+          {mockCategories.filter(cat => cat.name !== "Ofertas").slice(0, 4).map((category: Category) => ( // Mostrando apenas 4 em destaque aqui, excluindo "Ofertas" se já estiver no menu principal
             <Link key={category.id} href={`/products?category=${encodeURIComponent(category.name)}`} passHref>
               <div className="group relative aspect-video overflow-hidden rounded-lg border border-border/40 hover:border-border/70 shadow-none transition-all duration-300 cursor-pointer">
                 {category.imageUrl && (
