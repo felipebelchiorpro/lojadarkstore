@@ -19,7 +19,7 @@ export default function HomePage() {
       <section aria-labelledby="category-menu-heading" className="mb-8">
         <h2 id="category-menu-heading" className="sr-only">Navegar por Categorias</h2>
         <div className="bg-card py-3 border-b border-t border-border/40 shadow-none">
-          <div className="container mx-auto flex items-center justify-center md:justify-start overflow-x-auto space-x-2 md:space-x-4 px-2">
+          <div className="container mx-auto flex items-center justify-center overflow-x-auto space-x-2 md:space-x-4 px-2">
             {topLevelCategories.map((category: Category) => (
               <Link
                 key={category.id}
@@ -29,7 +29,7 @@ export default function HomePage() {
                 <Button
                   variant="ghost"
                   className={
-                    category.name === "COMBO E OFERTAS"
+                    category.id === "catComboOffers"
                       ? "uppercase text-sm font-medium text-primary border-2 border-primary rounded-full hover:text-primary hover:bg-primary/20 px-4 py-1 h-auto whitespace-nowrap flex items-center transition-all duration-150 ease-in-out"
                       : "uppercase text-sm font-medium text-muted-foreground hover:text-primary hover:bg-primary/10 px-3 py-1.5 h-auto whitespace-nowrap flex items-center"
                   }
@@ -52,7 +52,7 @@ export default function HomePage() {
           <h2 id="featured-categories-heading" className="font-headline text-3xl font-semibold text-foreground uppercase">Categorias em Destaque</h2>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-          {mockCategories.filter(cat => cat.name !== "COMBO E OFERTAS").slice(0, 4).map((category: Category) => ( 
+          {mockCategories.filter(cat => cat.id !== "catComboOffers").slice(0, 4).map((category: Category) => (
             <Link key={category.id} href={`/products?category=${encodeURIComponent(category.name)}`} passHref>
               <div className="group relative aspect-video overflow-hidden rounded-lg border border-border/40 hover:border-border/70 shadow-none transition-all duration-300 cursor-pointer">
                 {category.imageUrl && (
