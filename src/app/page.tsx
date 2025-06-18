@@ -1,99 +1,23 @@
 
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState } from 'react'; // Removed useEffect, DropdownMenu related imports
 import { Banner } from "@/components/Banner";
 import ProductCard from "@/components/ProductCard";
-import { mockProducts, mockCategories, mockPromotions, mainDropdownCategories } from "@/data/mockData";
-import type { Product, Category, DropdownCategory as MainDropdownCategoryType } from "@/types";
+import { mockProducts, mockCategories, mockPromotions } from "@/data/mockData"; // Removed mainDropdownCategories
+import type { Product, Category as TopCategoryType } from "@/types"; // Removed DropdownCategory
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ChevronRight, Menu as MenuIcon } from "lucide-react";
+import { ChevronRight } from "lucide-react"; // Removed MenuIcon
 import Image from "next/image";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 export default function HomePage() {
   const featuredProducts = mockProducts.slice(0, 4);
-  const topLevelCategories = mockCategories;
-
-  const [mainMenuOpen, setMainMenuOpen] = useState(false);
+  // Removed topLevelCategories, mainMenuOpen, hoveredCategory, openSubmenus as they moved to Header
 
   return (
     <div className="space-y-12">
-      {/* Category Menu Section */}
-      <section aria-labelledby="category-menu-heading" className="mb-8">
-        <h2 id="category-menu-heading" className="sr-only">Navegar por Categorias</h2>
-        <div className="bg-card py-2.5"> {/* Bar background */}
-          <div className="container mx-auto px-2 flex items-center space-x-2">
-            {/* Dropdown Menu for "CATEGORIAS" */}
-            <DropdownMenu
-              open={mainMenuOpen}
-              onOpenChange={setMainMenuOpen}
-            >
-              <div
-                onMouseLeave={() => { setMainMenuOpen(false); }}
-              >
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    className="uppercase text-xs sm:text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary/90 rounded-md px-3 sm:px-4 py-2 sm:py-2.5 h-auto flex items-center whitespace-nowrap"
-                    onMouseEnter={() => setMainMenuOpen(true)}
-                  >
-                    <MenuIcon className="h-4 w-4 mr-2" />
-                    CATEGORIAS
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  align="start"
-                  className="w-64 bg-background border-border shadow-lg"
-                  onMouseEnter={() => setMainMenuOpen(true)}
-                >
-                  <DropdownMenuLabel className="font-semibold text-foreground">Principais Categorias</DropdownMenuLabel>
-                  <DropdownMenuSeparator className="bg-border/50" />
-                  {mainDropdownCategories.map((mainCat: MainDropdownCategoryType) => (
-                    <Link key={mainCat.id} href={mainCat.href || "/products"} passHref>
-                      <DropdownMenuItem className="text-foreground hover:bg-muted focus:bg-muted" onClick={() => { setMainMenuOpen(false); }}>
-                        {mainCat.name}
-                      </DropdownMenuItem>
-                    </Link>
-                  ))}
-                </DropdownMenuContent>
-              </div>
-            </DropdownMenu>
-
-            {/* Container for horizontal scrollable categories, aligned left */}
-            <div className="flex-1 flex justify-center items-center overflow-x-auto whitespace-nowrap space-x-1 md:space-x-2 min-w-0">
-              {topLevelCategories.map((category: Category) => {
-                const isComboOffer = category.id === "catComboOffers";
-                const buttonClassName = isComboOffer
-                  ? "uppercase text-xs sm:text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-4 sm:px-5 py-1.5 sm:py-2 h-auto whitespace-nowrap flex items-center transition-all duration-150 ease-in-out"
-                  : "uppercase text-xs sm:text-sm font-medium text-foreground hover:text-primary hover:bg-transparent px-2 sm:px-3 py-1.5 h-auto whitespace-nowrap flex items-center";
-
-                return (
-                  <Link
-                    key={category.id}
-                    href={`/products?category=${encodeURIComponent(category.name)}`}
-                    passHref
-                  >
-                    <Button
-                      variant="ghost"
-                      className={buttonClassName}
-                    >
-                      {category.name.toUpperCase()}
-                    </Button>
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Category Menu Section is now part of the global Header */}
 
       <section aria-labelledby="banner-heading">
         <h2 id="banner-heading" className="sr-only">Promoções e Destaques</h2>
@@ -105,7 +29,7 @@ export default function HomePage() {
           <h2 id="featured-categories-heading" className="font-headline text-3xl font-semibold text-foreground uppercase">Categorias em Destaque</h2>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-          {mockCategories.filter(cat => cat.id !== "catComboOffers").slice(0, 4).map((category: Category) => (
+          {mockCategories.filter(cat => cat.id !== "catComboOffers").slice(0, 4).map((category: TopCategoryType) => (
             <Link key={category.id} href={`/products?category=${encodeURIComponent(category.name)}`} passHref>
               <div className="group relative aspect-video overflow-hidden rounded-lg border border-border/40 hover:border-border/70 shadow-none transition-all duration-300 cursor-pointer">
                 {category.imageUrl && (

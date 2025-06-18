@@ -1,7 +1,8 @@
+
 "use client";
 
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button"; // Keep Button if needed for the icon wrapper
 import { Search } from "lucide-react";
 import React, { useState, type ChangeEvent, type FormEvent } from 'react';
 
@@ -18,30 +19,34 @@ export default function SearchBar({ onSearch, initialQuery = "" }: SearchBarProp
   };
 
   const handleSubmit = (e?: FormEvent<HTMLFormElement>) => {
-    e?.preventDefault(); // Prevent default if used in a form
+    e?.preventDefault(); 
     onSearch(query);
   };
   
-  // Handle search on button click
   const handleSearchClick = () => {
     onSearch(query);
   };
 
   return (
-    // Using a div instead of form as per the unusual "no form onSubmit" constraint
-    <div className="flex w-full max-w-sm items-center space-x-2">
+    <div className="relative flex w-full items-center">
       <Input
         type="text"
-        placeholder="Buscar produtos..."
+        placeholder="Buscar suplementos..."
         value={query}
         onChange={handleInputChange}
         onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
-        className="h-10 text-base md:text-sm"
-        aria-label="Buscar produtos"
+        className="h-12 text-base rounded-md bg-white text-gray-800 pl-4 pr-12 w-full border-transparent focus:ring-1 focus:ring-primary focus:border-transparent shadow-sm"
+        aria-label="Buscar suplementos"
       />
-      <Button type="button" onClick={handleSearchClick} aria-label="Buscar">
-        <Search className="h-4 w-4" />
-      </Button>
+      <button 
+        type="button" 
+        onClick={handleSearchClick} 
+        aria-label="Buscar"
+        className="absolute inset-y-0 right-0 flex items-center justify-center px-4 text-primary hover:text-primary/80 transition-colors"
+        // Removed explicit bg-transparent to allow focus ring to be more visible if input border is transparent
+      >
+        <Search className="h-5 w-5" />
+      </button>
     </div>
   );
 }
