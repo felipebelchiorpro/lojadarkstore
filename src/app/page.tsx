@@ -7,7 +7,7 @@ import { mockProducts, mockCategories, mockPromotions } from "@/data/mockData";
 import type { Product, Category } from "@/types";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ChevronRight, Tag } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import Image from "next/image";
 
 export default function HomePage() {
@@ -30,7 +30,6 @@ export default function HomePage() {
                   variant="ghost"
                   className="text-sm font-medium text-muted-foreground hover:text-primary hover:bg-primary/10 px-3 py-1.5 h-auto whitespace-nowrap"
                 >
-                  <Tag className="mr-2 h-4 w-4 opacity-80" />
                   {category.name}
                 </Button>
               </Link>
