@@ -33,6 +33,7 @@ export default function HomePage() {
         <h2 id="category-menu-heading" className="sr-only">Navegar por Categorias</h2>
         <div className="bg-card py-2.5"> {/* Bar background */}
           <div className="container mx-auto flex items-center px-2"> {/* Parent Flex Container */}
+            
             {/* CATEGORIAS Dropdown */}
             <div className="flex-shrink-0"> {/* Ensures DropdownMenu doesn't expand unnecessarily */}
               <DropdownMenu>
@@ -79,7 +80,7 @@ export default function HomePage() {
             </div>
 
             {/* Horizontal Scrollable Categories */}
-            <div className="ml-2 flex-1 overflow-x-auto whitespace-nowrap space-x-1 md:space-x-2">
+            <div className="ml-2 flex-1 min-w-0 overflow-x-auto whitespace-nowrap space-x-1 md:space-x-2">
               {topLevelCategories.map((category: Category) => {
                 const isComboOffer = category.id === "catComboOffers";
                 const buttonClassName = isComboOffer
