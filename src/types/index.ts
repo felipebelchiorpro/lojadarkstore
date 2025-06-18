@@ -5,6 +5,7 @@ export interface Product {
   name: string;
   description: string;
   price: number;
+  originalPrice?: number; // Added for discount display
   category: string;
   brand: string;
   imageUrl: string;
@@ -14,7 +15,7 @@ export interface Product {
 }
 
 export interface Review {
-  id: string;
+  id:string;
   author: string;
   rating: number;
   comment: string;

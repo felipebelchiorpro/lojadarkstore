@@ -13,6 +13,7 @@ export const mockProducts: Product[] = [
     name: 'Whey Protein Concentrado (1kg)',
     description: 'Proteína de alta qualidade para ganho de massa muscular. Sabor Baunilha.',
     price: 129.90,
+    originalPrice: 166.54, // Approx 22% OFF
     category: 'GANHO DE MASSA', 
     brand: 'Dark Nutrition',
     imageUrl: 'https://placehold.co/600x400.png',
@@ -25,6 +26,7 @@ export const mockProducts: Product[] = [
     name: 'Creatina Monohidratada (300g)',
     description: 'Aumente sua força e performance nos treinos com nossa creatina pura.',
     price: 79.90,
+    originalPrice: 102.44, // Approx 22% OFF
     category: 'ENDURANCE', 
     brand: 'Dark Nutrition',
     imageUrl: 'https://placehold.co/600x400.png',
@@ -37,6 +39,7 @@ export const mockProducts: Product[] = [
     name: 'Multivitamínico Completo A-Z (90 caps)',
     description: 'Fórmula completa com vitaminas e minerais essenciais para sua saúde.',
     price: 59.90,
+    // No originalPrice, so no discount badge
     category: 'SAÚDE', 
     brand: 'Dark Vitality',
     imageUrl: 'https://placehold.co/600x400.png',
@@ -48,6 +51,7 @@ export const mockProducts: Product[] = [
     name: 'BCAA 2:1:1 (200g)',
     description: 'Aminoácidos de cadeia ramificada para recuperação muscular. Sabor Limão.',
     price: 69.90,
+    originalPrice: 93.20, // Approx 25% OFF
     category: 'DEFINIÇÃO', 
     brand: 'Dark Nutrition',
     imageUrl: 'https://placehold.co/600x400.png',
@@ -59,6 +63,7 @@ export const mockProducts: Product[] = [
     name: 'Pré-Treino Insano (300g)',
     description: 'Energia explosiva e foco para treinos intensos. Sabor Frutas Vermelhas.',
     price: 149.90,
+    originalPrice: 170.34, // Approx 12% OFF
     category: 'Pré Treino', 
     brand: 'Dark Performance',
     imageUrl: 'https://placehold.co/600x400.png',
@@ -82,6 +87,7 @@ export const mockProducts: Product[] = [
     name: 'Barra de Proteína (Caixa com 12)',
     description: 'Lanche proteico prático e delicioso para qualquer hora do dia. Sabor Chocolate.',
     price: 99.90,
+    originalPrice: 110.00, // Small discount
     category: 'Proteínas', 
     brand: 'Dark Nutrition',
     imageUrl: 'https://placehold.co/600x400.png',
@@ -139,8 +145,8 @@ export const mockOrders: Order[] = [
     id: 'order1',
     userId: 'user123',
     items: [
-      { ...mockProducts[0], quantity: 1 },
-      { ...mockProducts[1], quantity: 2 },
+      { ...mockProducts[0], quantity: 1, originalPrice: mockProducts[0].originalPrice },
+      { ...mockProducts[1], quantity: 2, originalPrice: mockProducts[1].originalPrice },
     ],
     totalAmount: (mockProducts[0].price * 1) + (mockProducts[1].price * 2),
     orderDate: '2024-07-01',
@@ -149,7 +155,7 @@ export const mockOrders: Order[] = [
   {
     id: 'order2',
     userId: 'user456',
-    items: [{ ...mockProducts[4], quantity: 1 }],
+    items: [{ ...mockProducts[4], quantity: 1, originalPrice: mockProducts[4].originalPrice }],
     totalAmount: mockProducts[4].price * 1,
     orderDate: '2024-07-10',
     status: 'Shipped',
@@ -158,8 +164,8 @@ export const mockOrders: Order[] = [
     id: 'order3',
     userId: 'user789',
     items: [
-      { ...mockProducts[2], quantity: 1 },
-      { ...mockProducts[5], quantity: 1 },
+      { ...mockProducts[2], quantity: 1 }, // No originalPrice
+      { ...mockProducts[5], quantity: 1 }, // No originalPrice
     ],
     totalAmount: mockProducts[2].price + mockProducts[5].price,
     orderDate: '2024-07-15',
