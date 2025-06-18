@@ -53,7 +53,9 @@ export default function Header() {
   const pathname = usePathname();
 
   const [mainMenuOpen, setMainMenuOpen] = useState(false);
-  
+  // const [hoveredCategory, setHoveredCategory] = useState<string | null>(null); // No longer needed for simplified dropdown
+  // const [openSubmenus, setOpenSubmenus] = useState<Record<string, boolean>>({}); // No longer needed
+
   useEffect(() => {
     setCartItemCount(getCartItemCount());
   }, [getCartItemCount]);
@@ -81,10 +83,20 @@ export default function Header() {
 
   const handleMainMenuLeave = () => {
     setMainMenuOpen(false);
+    // setOpenSubmenus({}); // No longer needed
   };
+
+  // const handleSubMenuEnter = (categoryId: string) => { // No longer needed
+  //   setOpenSubmenus(prev => ({ ...prev, [categoryId]: true }));
+  // };
+
+  // const handleSubMenuLeave = (categoryId: string) => { // No longer needed
+  //   setOpenSubmenus(prev => ({ ...prev, [categoryId]: false }));
+  // };
   
   const handleMenuItemClick = () => {
     setMainMenuOpen(false);
+    // setOpenSubmenus({}); // No longer needed
   };
 
 
@@ -96,12 +108,12 @@ export default function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center flex-shrink-0" aria-label="DarkStore Suplementos Home">
             <Image
-              src="/logo.png" // Assumindo que o logo está em public/logo.png
+              src="/logo.png" // Certifique-se que public/logo.png existe
               alt="DarkStore Suplementos Logo"
-              width={180} // Ajuste a largura conforme necessário
-              height={40} // Ajuste a altura conforme necessário
+              width={180} 
+              height={40} 
               className="object-contain"
-              priority // Para carregar o logo mais rápido
+              priority 
             />
           </Link>
 
@@ -168,7 +180,7 @@ export default function Header() {
                 <div className="flex justify-between items-center mb-6">
                   <Link href="/" className="flex items-center" onClick={closeSheet}>
                      <Image
-                        src="/logo.png" // Logo para o menu mobile
+                        src="/logo.png" // Certifique-se que public/logo.png existe
                         alt="DarkStore Suplementos Logo"
                         width={150}
                         height={33}
@@ -250,7 +262,7 @@ export default function Header() {
                 <DropdownMenuContent
                   align="start"
                   className="w-64 bg-background border-border shadow-lg"
-                  onMouseEnter={handleMainMenuEnter} // Manter o menu aberto se o mouse entrar no conteúdo
+                  onMouseEnter={handleMainMenuEnter} 
                 >
                   <DropdownMenuLabel className="font-semibold text-foreground">Principais Categorias</DropdownMenuLabel>
                   <DropdownMenuSeparator className="bg-border/50" />
@@ -298,3 +310,4 @@ export default function Header() {
     </header>
   );
 }
+
