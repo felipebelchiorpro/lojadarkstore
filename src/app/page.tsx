@@ -1,7 +1,7 @@
 
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react'; // Adicionado useState
 import { Banner } from "@/components/Banner";
 import ProductCard from "@/components/ProductCard";
 import { mockProducts, mockCategories, mockPromotions, mainDropdownCategories } from "@/data/mockData";
@@ -28,6 +28,9 @@ export default function HomePage() {
   const featuredProducts = mockProducts.slice(0, 4);
   const topLevelCategories = mockCategories;
 
+  const [mainMenuOpen, setMainMenuOpen] = useState(false);
+  const [openSubmenus, setOpenSubmenus] = useState<Record<string, boolean>>({});
+
   return (
     <div className="space-y-12">
       {/* Category Menu Section */}
@@ -36,55 +39,90 @@ export default function HomePage() {
         <div className="bg-card py-2.5"> {/* Bar background */}
           <div className="container mx-auto px-2 flex items-center space-x-2">
             {/* Dropdown Menu for "CATEGORIAS" */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button className="uppercase text-xs sm:text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary/90 rounded-md px-3 sm:px-4 py-2 sm:py-2.5 h-auto flex items-center whitespace-nowrap">
-                  <MenuIcon className="h-4 w-4 mr-2" />
-                  CATEGORIAS
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-64 bg-background border-border shadow-lg" align="start">
-                <DropdownMenuLabel className="font-semibold text-foreground">Principais Categorias</DropdownMenuLabel>
-                <DropdownMenuSeparator className="bg-border/50" />
-                {mainDropdownCategories.map((mainCat: MainDropdownCategoryType) => (
-                  mainCat.hasSubmenu && mainCat.subItems ? (
-                    <DropdownMenuSub key={mainCat.id}>
-                      <DropdownMenuSubTrigger className="text-foreground hover:bg-muted focus:bg-muted">
-                        <span>{mainCat.name}</span>
-                        <ChevronRight className="ml-auto h-4 w-4" />
-                      </DropdownMenuSubTrigger>
-                      <DropdownMenuPortal>
-                        <DropdownMenuSubContent className="bg-background border-border shadow-lg text-foreground">
-                          {mainCat.href && ( // Option to view all in parent category
-                            <Link href={mainCat.href} passHref>
-                              <DropdownMenuItem className="hover:bg-muted focus:bg-muted">
-                                Ver Tudo em {mainCat.name}
-                              </DropdownMenuItem>
-                            </Link>
-                          )}
-                          {mainCat.subItems.map(subItem => (
-                            <Link key={subItem.id} href={subItem.href} passHref>
-                              <DropdownMenuItem className="hover:bg-muted focus:bg-muted">
-                                {subItem.name}
-                              </DropdownMenuItem>
-                            </Link>
-                          ))}
-                        </DropdownMenuSubContent>
-                      </DropdownMenuPortal>
-                    </DropdownMenuSub>
-                  ) : (
-                    <Link key={mainCat.id} href={mainCat.href || "/products"} passHref>
-                      <DropdownMenuItem className="text-foreground hover:bg-muted focus:bg-muted">
-                        {mainCat.name}
-                      </DropdownMenuItem>
-                    </Link>
-                  )
-                ))}
-              </DropdownMenuContent>
+            <DropdownMenu 
+              open={mainMenuOpen} 
+              onOpenChange={setMainMenuOpen}
+              // onMouseLeave={() => { setMainMenuOpen(false); setOpenSubmenus({}); }} // Gerencia o fechamento principal
+            >
+              <div 
+                onMouseLeave={() => { setMainMenuOpen(false); setOpenSubmenus({}); }}
+              >
+                <DropdownMenuTrigger asChild>
+                  <Button 
+                    className="uppercase text-xs sm:text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary/90 rounded-md px-3 sm:px-4 py-2 sm:py-2.5 h-auto flex items-center whitespace-nowrap"
+                    onMouseEnter={() => setMainMenuOpen(true)}
+                  >
+                    <MenuIcon className="h-4 w-4 mr-2" />
+                    CATEGORIAS
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent 
+                  align="start" 
+                  className="w-64 bg-background border-border shadow-lg"
+                  // onMouseLeave já está no div wrapper
+                  // Adicionado onMouseEnter para manter aberto se o mouse entrar direto no conteúdo
+                  onMouseEnter={() => setMainMenuOpen(true)} 
+                >
+                  <DropdownMenuLabel className="font-semibold text-foreground">Principais Categorias</DropdownMenuLabel>
+                  <DropdownMenuSeparator className="bg-border/50" />
+                  {mainDropdownCategories.map((mainCat: MainDropdownCategoryType) => (
+                    mainCat.hasSubmenu && mainCat.subItems ? (
+                      <DropdownMenuSub
+                        key={mainCat.id}
+                        open={openSubmenus[mainCat.id] || false}
+                        onOpenChange={(isOpen) =>
+                          setOpenSubmenus((prev) => ({ ...prev, [mainCat.id]: isOpen }))
+                        }
+                      >
+                        <div 
+                          onMouseLeave={() => setOpenSubmenus((prev) => ({ ...prev, [mainCat.id]: false }))}
+                        >
+                          <DropdownMenuSubTrigger
+                            onMouseEnter={() => setOpenSubmenus((prev) => ({ ...prev, [mainCat.id]: true }))}
+                            className="text-foreground hover:bg-muted focus:bg-muted"
+                          >
+                            <span>{mainCat.name}</span>
+                            <ChevronRight className="ml-auto h-4 w-4" />
+                          </DropdownMenuSubTrigger>
+                          <DropdownMenuPortal>
+                            <DropdownMenuSubContent 
+                              className="bg-background border-border shadow-lg text-foreground"
+                              // onMouseLeave já está no div wrapper do SubMenu
+                              // Adicionado onMouseEnter para manter aberto se o mouse entrar direto no conteúdo do submenu
+                              onMouseEnter={() => setOpenSubmenus((prev) => ({ ...prev, [mainCat.id]: true }))}
+                            >
+                              {mainCat.href && (
+                                <Link href={mainCat.href} passHref>
+                                  <DropdownMenuItem className="hover:bg-muted focus:bg-muted" onClick={() => {setMainMenuOpen(false); setOpenSubmenus({});}}>
+                                    Ver Tudo em {mainCat.name}
+                                  </DropdownMenuItem>
+                                </Link>
+                              )}
+                              {mainCat.subItems.map(subItem => (
+                                <Link key={subItem.id} href={subItem.href} passHref>
+                                  <DropdownMenuItem className="hover:bg-muted focus:bg-muted" onClick={() => {setMainMenuOpen(false); setOpenSubmenus({});}}>
+                                    {subItem.name}
+                                  </DropdownMenuItem>
+                                </Link>
+                              ))}
+                            </DropdownMenuSubContent>
+                          </DropdownMenuPortal>
+                        </div>
+                      </DropdownMenuSub>
+                    ) : (
+                      <Link key={mainCat.id} href={mainCat.href || "/products"} passHref>
+                        <DropdownMenuItem className="text-foreground hover:bg-muted focus:bg-muted" onClick={() => {setMainMenuOpen(false); setOpenSubmenus({});}}>
+                          {mainCat.name}
+                        </DropdownMenuItem>
+                      </Link>
+                    )
+                  ))}
+                </DropdownMenuContent>
+              </div>
             </DropdownMenu>
 
             {/* Container for horizontal scrollable categories, aligned left */}
-            <div className="flex-1 flex items-center overflow-x-auto whitespace-nowrap space-x-1 md:space-x-2 min-w-0">
+            <div className="flex-1 flex justify-center items-center overflow-x-auto whitespace-nowrap space-x-1 md:space-x-2 min-w-0">
               {topLevelCategories.map((category: Category) => {
                 const isComboOffer = category.id === "catComboOffers";
                 const buttonClassName = isComboOffer
@@ -175,3 +213,4 @@ export default function HomePage() {
     </div>
   );
 }
+
