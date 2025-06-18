@@ -1,24 +1,32 @@
 
 "use client";
 
-import React, { useState } from 'react'; // Removed useEffect, DropdownMenu related imports
+import React, { useRef } from 'react';
 import { Banner } from "@/components/Banner";
 import ProductCard from "@/components/ProductCard";
-import { mockProducts, mockCategories, mockPromotions } from "@/data/mockData"; // Removed mainDropdownCategories
-import type { Product, Category as TopCategoryType } from "@/types"; // Removed DropdownCategory
+import { mockProducts, mockCategories, mockPromotions } from "@/data/mockData";
+import type { Product, Category as TopCategoryType } from "@/types";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ChevronRight } from "lucide-react"; // Removed MenuIcon
+import { ChevronRight } from "lucide-react";
 import Image from "next/image";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import Autoplay from "embla-carousel-autoplay";
 
 export default function HomePage() {
-  const featuredProducts = mockProducts.slice(0, 8); // Increased to 8 to better demonstrate scrolling
-  // Removed topLevelCategories, mainMenuOpen, hoveredCategory, openSubmenus as they moved to Header
+  const featuredProducts = mockProducts.slice(0, 8); // Ensure enough products for carousel
+  const popularProductsPlugin = useRef(
+    Autoplay({ delay: 5000, stopOnInteraction: true })
+  );
 
   return (
     <div className="space-y-12">
-      {/* Category Menu Section is now part of the global Header */}
-
       <section aria-labelledby="banner-heading">
         <h2 id="banner-heading" className="sr-only">Promoções e Destaques</h2>
         <Banner promotions={mockPromotions} />
@@ -60,13 +68,28 @@ export default function HomePage() {
             </Button>
           </Link>
         </div>
-        <div className="flex overflow-x-auto space-x-4 pb-4 -mb-4"> {/* Added pb-4 and -mb-4 for scrollbar spacing */}
-          {featuredProducts.map((product: Product) => (
-            <div key={product.id} className="flex-shrink-0 w-72"> {/* Card width set here */}
-              <ProductCard product={product} />
-            </div>
-          ))}
-        </div>
+        <Carousel
+          plugins={[popularProductsPlugin.current]}
+          className="w-full"
+          opts={{
+            align: "start",
+            loop: true,
+          }}
+          onMouseEnter={popularProductsPlugin.current.stop}
+          onMouseLeave={popularProductsPlugin.current.reset}
+        >
+          <CarouselContent className="-ml-4"> {/* Negative margin to offset CarouselItem's padding */}
+            {featuredProducts.map((product: Product) => (
+              <CarouselItem key={product.id} className="pl-4 basis-full sm:basis-1/2 md:basis-1/4">
+                <div className="h-full p-1"> {/* Added small padding for spacing around card if needed */}
+                  <ProductCard product={product} />
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious className="absolute left-[-20px] md:left-[-25px] top-1/2 -translate-y-1/2 z-10 bg-background/80 hover:bg-background text-foreground border-border shadow-md hidden sm:flex" />
+          <CarouselNext className="absolute right-[-20px] md:right-[-25px] top-1/2 -translate-y-1/2 z-10 bg-background/80 hover:bg-background text-foreground border-border shadow-md hidden sm:flex" />
+        </Carousel>
       </section>
 
       <section aria-labelledby="call-to-action-heading" className="py-12 bg-card rounded-lg border border-border/40 shadow-none">
