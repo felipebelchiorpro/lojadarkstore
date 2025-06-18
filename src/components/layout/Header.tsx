@@ -49,7 +49,6 @@ export default function Header() {
   const pathname = usePathname();
 
   const [mainMenuOpen, setMainMenuOpen] = useState(false);
-  // const [openSubmenus, setOpenSubmenus] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     setCartItemCount(getCartItemCount());
@@ -78,21 +77,11 @@ export default function Header() {
 
   const handleMainMenuLeave = () => {
     setMainMenuOpen(false);
-    // setOpenSubmenus({}); // Close all submenus when main menu is left
   };
   
   const handleMenuItemClick = () => {
     setMainMenuOpen(false);
-    // setOpenSubmenus({});
   };
-
-  // const handleSubMenuEnter = (submenuId: string) => {
-  //   setOpenSubmenus(prev => ({ ...prev, [submenuId]: true }));
-  // };
-
-  // const handleSubMenuLeave = (submenuId: string) => {
-  //   setOpenSubmenus(prev => ({ ...prev, [submenuId]: false }));
-  // };
 
 
   return (
@@ -103,10 +92,10 @@ export default function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center flex-shrink-0" aria-label="DarkStore Suplementos Home">
             <Image
-              src="/darkstore-logo" 
+              src="/darkstore-logo.png" 
               alt="DarkStore Suplementos Logo"
               width={180} 
-              height={44} // Adjusted height
+              height={44} 
               className="object-contain"
               priority 
             />
@@ -175,10 +164,10 @@ export default function Header() {
                 <div className="flex justify-between items-center mb-6">
                   <Link href="/" className="flex items-center" onClick={closeSheet}>
                      <Image
-                        src="/darkstore-logo" 
+                        src="/darkstore-logo.png" 
                         alt="DarkStore Suplementos Logo"
                         width={150}
-                        height={37} // Adjusted height
+                        height={37} 
                         className="object-contain"
                       />
                   </Link>
