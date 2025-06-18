@@ -79,10 +79,10 @@ export default function ProductCard({ product }: ProductCardProps) {
         </div>
       </CardContent>
 
-      <CardFooter className="p-0 border-t-0">
+      <CardFooter className="p-2 border-t-0">
         <Button
           onClick={handleAddToCart}
-          className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-t-none rounded-b-md text-sm font-semibold py-3"
+          className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-md text-sm font-semibold py-3"
           disabled={product.stock === 0}
           aria-label={`Comprar ${product.name}`}
         >
