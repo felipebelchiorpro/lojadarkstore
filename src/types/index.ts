@@ -1,0 +1,56 @@
+
+export interface Product {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  category: string;
+  brand: string;
+  imageUrl: string;
+  stock: number;
+  reviews?: Review[];
+  rating?: number; // Average rating
+}
+
+export interface Review {
+  id: string;
+  author: string;
+  rating: number;
+  comment: string;
+  date: string;
+}
+
+export interface Category {
+  id: string;
+  name: string;
+  imageUrl?: string; // Optional: for category banners
+}
+
+export interface CartItem extends Product {
+  quantity: number;
+}
+
+export interface User {
+  id: string;
+  email: string;
+  name?: string;
+  // For simulated auth, no password stored
+}
+
+export interface Order {
+  id: string;
+  userId: string;
+  items: CartItem[];
+  totalAmount: number;
+  orderDate: string;
+  status: 'Pending' | 'Shipped' | 'Delivered' | 'Cancelled';
+  shippingAddress?: string; // Simplified
+}
+
+export interface Promotion {
+  id: string;
+  title: string;
+  description: string;
+  imageUrl: string;
+  link: string; // e.g., link to a category or product
+}
