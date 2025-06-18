@@ -53,8 +53,6 @@ export default function Header() {
   const pathname = usePathname();
 
   const [mainMenuOpen, setMainMenuOpen] = useState(false);
-  // const [hoveredCategory, setHoveredCategory] = useState<string | null>(null); // No longer needed for simplified dropdown
-  // const [openSubmenus, setOpenSubmenus] = useState<Record<string, boolean>>({}); // No longer needed
 
   useEffect(() => {
     setCartItemCount(getCartItemCount());
@@ -83,20 +81,10 @@ export default function Header() {
 
   const handleMainMenuLeave = () => {
     setMainMenuOpen(false);
-    // setOpenSubmenus({}); // No longer needed
   };
-
-  // const handleSubMenuEnter = (categoryId: string) => { // No longer needed
-  //   setOpenSubmenus(prev => ({ ...prev, [categoryId]: true }));
-  // };
-
-  // const handleSubMenuLeave = (categoryId: string) => { // No longer needed
-  //   setOpenSubmenus(prev => ({ ...prev, [categoryId]: false }));
-  // };
   
   const handleMenuItemClick = () => {
     setMainMenuOpen(false);
-    // setOpenSubmenus({}); // No longer needed
   };
 
 
@@ -108,7 +96,7 @@ export default function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center flex-shrink-0" aria-label="DarkStore Suplementos Home">
             <Image
-              src="/logo%20loja.png" 
+              src="/darkstore-logo.png" 
               alt="DarkStore Suplementos Logo"
               width={180} 
               height={40} 
@@ -180,7 +168,7 @@ export default function Header() {
                 <div className="flex justify-between items-center mb-6">
                   <Link href="/" className="flex items-center" onClick={closeSheet}>
                      <Image
-                        src="/logo%20loja.png" 
+                        src="/darkstore-logo.png" 
                         alt="DarkStore Suplementos Logo"
                         width={150}
                         height={33}
@@ -310,4 +298,3 @@ export default function Header() {
     </header>
   );
 }
-
