@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useForm, Controller } from "react-hook-form";
@@ -11,8 +12,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog";
 import type { Product } from "@/types";
-import { mockCategories, mockProducts } from "@/data/mockData"; // mockProducts needed for brand list
-import { useEffect, useMemo } from "react";
+import { mockCategories, mockProducts } from "@/data/mockData"; 
+import { useEffect, useState } from "react";
+import Image from "next/image";
 
 const productSchema = z.object({
   name: z.string().min(3, { message: "Nome do produto deve ter pelo menos 3 caracteres." }),
@@ -21,7 +23,7 @@ const productSchema = z.object({
   originalPrice: z.coerce.number().positive({ message: "Preço original deve ser um número positivo." }).optional().nullable(),
   category: z.string().min(1, { message: "Selecione uma categoria." }),
   brand: z.string().min(1, { message: "Selecione uma marca." }),
-  imageUrl: z.string().url({ message: "URL da imagem inválida." }).optional().or(z.literal('')),
+  imageUrl: z.string().min(1, { message: "É necessário uma imagem." }), // Will store data URI or placeholder
   stock: z.coerce.number().int().min(0, { message: "Estoque não pode ser negativo." }),
   isNewRelease: z.boolean().optional(),
 });
@@ -29,17 +31,18 @@ const productSchema = z.object({
 type ProductFormValues = z.infer<typeof productSchema>;
 
 interface ProductFormProps {
-  product?: Product | null; // For editing
+  product?: Product | null; 
   onSubmitProduct: (data: Product, isEditing: boolean) => void;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-// Extract unique brands from mockProducts
 const ALL_BRANDS = Array.from(new Set(mockProducts.map(p => p.brand))).sort();
-
+const DEFAULT_PLACEHOLDER_IMAGE = "https://placehold.co/600x400.png";
 
 export default function ProductForm({ product, onSubmitProduct, open, onOpenChange }: ProductFormProps) {
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(productSchema),
     defaultValues: {
@@ -49,14 +52,14 @@ export default function ProductForm({ product, onSubmitProduct, open, onOpenChan
       originalPrice: null,
       category: "",
       brand: "",
-      imageUrl: "https://placehold.co/600x400.png",
+      imageUrl: DEFAULT_PLACEHOLDER_IMAGE,
       stock: 0,
       isNewRelease: false,
     },
   });
   
   useEffect(() => {
-    if (open) { // Reset form only when dialog opens or product changes
+    if (open) { 
       if (product) {
         form.reset({
           name: product.name,
@@ -65,10 +68,11 @@ export default function ProductForm({ product, onSubmitProduct, open, onOpenChan
           originalPrice: product.originalPrice || null,
           category: product.category,
           brand: product.brand,
-          imageUrl: product.imageUrl || "https://placehold.co/600x400.png",
+          imageUrl: product.imageUrl || DEFAULT_PLACEHOLDER_IMAGE,
           stock: product.stock,
           isNewRelease: product.isNewRelease || false,
         });
+        setImagePreview(product.imageUrl || DEFAULT_PLACEHOLDER_IMAGE);
       } else {
         form.reset({ 
           name: "",
@@ -77,21 +81,39 @@ export default function ProductForm({ product, onSubmitProduct, open, onOpenChan
           originalPrice: null,
           category: "",
           brand: "",
-          imageUrl: "https://placehold.co/600x400.png",
+          imageUrl: DEFAULT_PLACEHOLDER_IMAGE,
           stock: 0,
           isNewRelease: false,
         });
+        setImagePreview(DEFAULT_PLACEHOLDER_IMAGE); 
       }
     }
   }, [product, form, open]);
 
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const dataUri = reader.result as string;
+        setImagePreview(dataUri);
+        form.setValue("imageUrl", dataUri, { shouldValidate: true });
+      };
+      reader.readAsDataURL(file);
+    } else {
+      // If file is removed, revert to original product image or default placeholder
+      const revertUrl = product?.imageUrl || DEFAULT_PLACEHOLDER_IMAGE;
+      setImagePreview(revertUrl);
+      form.setValue("imageUrl", revertUrl);
+    }
+  };
 
   const handleSubmit = (data: ProductFormValues) => {
     const finalData: Product = {
       ...data,
       id: product?.id || `prod-${Date.now()}`, 
-      imageUrl: data.imageUrl || "https://placehold.co/600x400.png",
-      originalPrice: data.originalPrice || undefined, // Ensure undefined if null/empty
+      imageUrl: data.imageUrl, // It's already a data URI or placeholder
+      originalPrice: data.originalPrice || undefined, 
       isNewRelease: data.isNewRelease || false,
     };
     onSubmitProduct(finalData, !!product);
@@ -183,13 +205,30 @@ export default function ProductForm({ product, onSubmitProduct, open, onOpenChan
                 {form.formState.errors.brand && <p className="text-xs text-destructive mt-1">{form.formState.errors.brand.message}</p>}
               </div>
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="imageUrl" className="text-right col-span-1">URL da Imagem</Label>
+
+            <div className="grid grid-cols-4 items-start gap-4">
+              <Label htmlFor="imageUpload" className="text-right col-span-1 pt-2">Imagem</Label>
               <div className="col-span-3">
-                <Input id="imageUrl" {...form.register("imageUrl")} className={form.formState.errors.imageUrl ? "border-destructive" : ""} />
-                {form.formState.errors.imageUrl && <p className="text-xs text-destructive mt-1">{form.formState.errors.imageUrl.message}</p>}
+                <Input 
+                  id="imageUpload" 
+                  type="file" 
+                  accept="image/*" 
+                  onChange={handleImageChange}
+                  className={form.formState.errors.imageUrl ? "border-destructive" : ""} 
+                />
+                {imagePreview && (
+                  <div className="mt-2 relative w-32 h-32 rounded border border-muted overflow-hidden bg-muted">
+                    <Image src={imagePreview} alt="Pré-visualização do produto" layout="fill" objectFit="contain" data-ai-hint="product preview"/>
+                  </div>
+                )}
+                {form.formState.errors.imageUrl && !imagePreview && (
+                   <p className="text-xs text-destructive mt-1">{form.formState.errors.imageUrl.message}</p>
+                )}
+                 {/* Hidden input to satisfy react-hook-form for imageUrl, its value is set by handleImageChange */}
+                <input type="hidden" {...form.register("imageUrl")} />
               </div>
             </div>
+
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="stock" className="text-right col-span-1">Estoque</Label>
               <div className="col-span-3">
