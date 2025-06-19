@@ -32,7 +32,7 @@ import {
   Cell
 } from "recharts";
 import type { DateRange } from "react-day-picker";
-import { format, addDays, subDays } from "date-fns";
+import { format, subDays } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { mockCategories, biDashboardSalesChannels, biDashboardStates } from "@/data/mockData";
 
@@ -97,7 +97,7 @@ const salesByCategoryData = [
 ];
 
 const categoryChartConfig = {
-  sales: { label: "Vendas" }, 
+  sales: { label: "Vendas" },
   "GANHO DE MASSA": { label: "GANHO DE MASSA", color: "hsl(var(--chart-1))" },
   "ENDURANCE": { label: "ENDURANCE", color: "hsl(var(--chart-2))" },
   "EMAGRECIMENTO": { label: "EMAGRECIMENTO", color: "hsl(var(--chart-3))" },
@@ -223,7 +223,7 @@ export default function BiAnalyticsPage() {
           </CardHeader>
           <CardContent className="h-[300px]">
             <ChartContainer config={salesChartConfig} className="h-full w-full">
-              <LineChart data={salesOverTimeData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+              <LineChart data={salesOverTimeData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}> {/* Adjusted left margin */}
                 <CartesianGrid strokeDasharray="3 3" vertical={false}/>
                 <XAxis dataKey="name" tickLine={false} axisLine={false} tickMargin={8} />
                 <YAxis tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => `R$${value/1000}k`} />
@@ -258,43 +258,43 @@ export default function BiAnalyticsPage() {
             <CardTitle className="flex items-center text-lg"><PieChartLucide className="mr-2 h-5 w-5 text-primary" />Vendas por Categoria</CardTitle>
           </CardHeader>
           <CardContent className="h-[300px] flex items-center justify-center">
-            <ChartContainer 
-              config={categoryChartConfig} 
+            <ChartContainer
+              config={categoryChartConfig}
               className="mx-auto aspect-square max-h-[300px]"
             >
                 <PieChart>
-                    <ChartTooltip 
+                    <ChartTooltip
                       cursor={false}
-                      content={<ChartTooltipContent hideLabel nameKey="category" />} 
+                      content={<ChartTooltipContent hideLabel nameKey="category" />}
                     />
-                    <Pie 
-                      data={salesByCategoryData} 
-                      dataKey="sales" 
-                      nameKey="category" 
-                      innerRadius={60} 
+                    <Pie
+                      data={salesByCategoryData}
+                      dataKey="sales"
+                      nameKey="category"
+                      innerRadius={60}
                       strokeWidth={5}
                     >
                        {salesByCategoryData.map((entry, index) => (
                          <Cell key={`cell-${index}`} fill={entry.fill} />
                        ))}
                     </Pie>
-                    <RechartsLegend 
-                      content={<ChartLegendContent nameKey="category" className="flex-wrap" />} 
-                      verticalAlign="bottom" 
-                      align="center" 
+                    <RechartsLegend
+                      content={<ChartLegendContent nameKey="category" className="flex-wrap" />}
+                      verticalAlign="bottom"
+                      align="center"
                     />
                 </PieChart>
             </ChartContainer>
           </CardContent>
         </Card>
-        
+
         <Card className="shadow-lg">
           <CardHeader>
             <CardTitle className="flex items-center text-lg"><Users className="mr-2 h-5 w-5 text-primary" />Aquisição de Novos Clientes</CardTitle>
           </CardHeader>
           <CardContent className="h-[300px]">
              <ChartContainer config={customersChartConfig} className="h-full w-full">
-                <LineChart data={newCustomersData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+                <LineChart data={newCustomersData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}> {/* Adjusted left margin */}
                     <CartesianGrid strokeDasharray="3 3" vertical={false}/>
                     <XAxis dataKey="name" tickLine={false} axisLine={false} tickMargin={8} />
                     <YAxis tickLine={false} axisLine={false} tickMargin={8} />
