@@ -3,7 +3,8 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from '@/context/AuthContext';
 import { CartProvider } from '@/context/CartContext';
-import ConditionalLayout from '@/components/layout/ConditionalLayout'; // Added
+import { BrandProvider } from '@/context/BrandContext'; // Added
+import ConditionalLayout from '@/components/layout/ConditionalLayout';
 
 export const metadata: Metadata = {
   title: 'DarkStore Suplementos',
@@ -26,12 +27,14 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased bg-background text-foreground min-h-screen flex flex-col">
         <AuthProvider>
-          <CartProvider>
-            <ConditionalLayout>
-              {children}
-            </ConditionalLayout>
-            <Toaster />
-          </CartProvider>
+          <BrandProvider> {/* Added BrandProvider */}
+            <CartProvider>
+              <ConditionalLayout>
+                {children}
+              </ConditionalLayout>
+              <Toaster />
+            </CartProvider>
+          </BrandProvider>
         </AuthProvider>
       </body>
     </html>

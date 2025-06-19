@@ -12,7 +12,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog";
 import type { Product } from "@/types";
-import { mockCategories, mockProducts } from "@/data/mockData"; 
+import { mockCategories } from "@/data/mockData"; 
+import { useBrand } from "@/context/BrandContext"; // Import useBrand
 import { useEffect, useState } from "react";
 import Image from "next/image";
 
@@ -23,7 +24,7 @@ const productSchema = z.object({
   originalPrice: z.coerce.number().positive({ message: "Preço original deve ser um número positivo." }).optional().nullable(),
   category: z.string().min(1, { message: "Selecione uma categoria." }),
   brand: z.string().min(1, { message: "Selecione uma marca." }),
-  imageUrl: z.string().min(1, { message: "É necessário uma imagem." }), // Will store data URI or placeholder
+  imageUrl: z.string().min(1, { message: "É necessário uma imagem." }),
   stock: z.coerce.number().int().min(0, { message: "Estoque não pode ser negativo." }),
   isNewRelease: z.boolean().optional(),
 });
@@ -37,12 +38,13 @@ interface ProductFormProps {
   onOpenChange: (open: boolean) => void;
 }
 
-const ALL_BRANDS = Array.from(new Set(mockProducts.map(p => p.brand))).sort();
 const DEFAULT_PLACEHOLDER_IMAGE = "https://placehold.co/600x400.png";
 
 export default function ProductForm({ product, onSubmitProduct, open, onOpenChange }: ProductFormProps) {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  
+  const { getBrands } = useBrand(); // Use the BrandContext
+  const availableBrands = getBrands(); // Get brands from context
+
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(productSchema),
     defaultValues: {
@@ -101,7 +103,6 @@ export default function ProductForm({ product, onSubmitProduct, open, onOpenChan
       };
       reader.readAsDataURL(file);
     } else {
-      // If file is removed, revert to original product image or default placeholder
       const revertUrl = product?.imageUrl || DEFAULT_PLACEHOLDER_IMAGE;
       setImagePreview(revertUrl);
       form.setValue("imageUrl", revertUrl);
@@ -112,7 +113,7 @@ export default function ProductForm({ product, onSubmitProduct, open, onOpenChan
     const finalData: Product = {
       ...data,
       id: product?.id || `prod-${Date.now()}`, 
-      imageUrl: data.imageUrl, // It's already a data URI or placeholder
+      imageUrl: data.imageUrl,
       originalPrice: data.originalPrice || undefined, 
       isNewRelease: data.isNewRelease || false,
     };
@@ -195,9 +196,13 @@ export default function ProductForm({ product, onSubmitProduct, open, onOpenChan
                             <SelectValue placeholder="Selecione uma marca" />
                         </SelectTrigger>
                         <SelectContent>
-                            {ALL_BRANDS.map(brandName => (
-                            <SelectItem key={brandName} value={brandName}>{brandName}</SelectItem>
-                            ))}
+                            {availableBrands.length > 0 ? (
+                              availableBrands.map(brandName => (
+                                <SelectItem key={brandName} value={brandName}>{brandName}</SelectItem>
+                              ))
+                            ) : (
+                              <SelectItem value="" disabled>Nenhuma marca cadastrada</SelectItem>
+                            )}
                         </SelectContent>
                         </Select>
                     )}
@@ -224,7 +229,6 @@ export default function ProductForm({ product, onSubmitProduct, open, onOpenChan
                 {form.formState.errors.imageUrl && !imagePreview && (
                    <p className="text-xs text-destructive mt-1">{form.formState.errors.imageUrl.message}</p>
                 )}
-                 {/* Hidden input to satisfy react-hook-form for imageUrl, its value is set by handleImageChange */}
                 <input type="hidden" {...form.register("imageUrl")} />
               </div>
             </div>

@@ -31,6 +31,9 @@ export interface Category {
   totalRevenue?: number; // For Top 5 Categories
 }
 
+// Simple Brand type, could be expanded later if needed
+export type Brand = string;
+
 export interface CartItem extends Product {
   quantity: number;
 }
