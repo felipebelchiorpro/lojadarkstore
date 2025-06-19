@@ -1,8 +1,9 @@
+
 "use client";
 
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { mockProducts } from '@/data/mockData';
+// import { mockProducts } from '@/data/mockData'; // Removed
 import type { Product, Review } from '@/types';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/context/CartContext';
@@ -13,6 +14,8 @@ import { Separator } from '@/components/ui/separator';
 import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
+import { useProduct } from '@/context/ProductContext'; // Import useProduct
+import { notFound } from 'next/navigation'; // For handling product not found
 
 // Helper function to format dates (can be moved to a utils file)
 const formatDate = (dateString: string) => {
@@ -23,20 +26,23 @@ const formatDate = (dateString: string) => {
 
 
 export default function ProductDetailPage({ params }: { params: { id: string } }) {
-  const [product, setProduct] = useState<Product | null>(null);
+  const { getProductById, loading: productsLoading } = useProduct();
+  const [product, setProduct] = useState<Product | null | undefined>(undefined); // undefined for initial, null if not found
   const [quantity, setQuantity] = useState(1);
   const { addToCart } = useCart();
   const { toast } = useToast();
   
   useEffect(() => {
-    const foundProduct = mockProducts.find(p => p.id === params.id);
-    // Simulate API delay
-    setTimeout(() => {
-      setProduct(foundProduct || null);
-    }, 300);
-  }, [params.id]);
+    if (!productsLoading) {
+      const foundProduct = getProductById(params.id);
+      // Simulate API delay slightly if needed, or just set directly
+      // setTimeout(() => {
+        setProduct(foundProduct || null); // Set to null if not found after loading
+      // }, 100); // Shorter delay as data is local
+    }
+  }, [params.id, getProductById, productsLoading]);
 
-  if (!product) {
+  if (productsLoading || product === undefined) { // Still loading products or product state not yet determined
     return (
       <div className="container mx-auto py-12 px-4">
         <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-start">
@@ -58,12 +64,18 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
     );
   }
 
+  if (product === null) { // Product definitively not found
+    notFound(); // Or render a custom "Product not found" component
+  }
+
   const handleAddToCart = () => {
-    addToCart(product, quantity);
-    toast({
-      title: "Adicionado ao Carrinho!",
-      description: `${quantity}x ${product.name} foi adicionado ao seu carrinho.`,
-    });
+    if (product) {
+      addToCart(product, quantity);
+      toast({
+        title: "Adicionado ao Carrinho!",
+        description: `${quantity}x ${product.name} foi adicionado ao seu carrinho.`,
+      });
+    }
   };
 
   const averageRating = product.reviews && product.reviews.length > 0
@@ -86,7 +98,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
         <div className="sticky top-24">
           <div className="aspect-square w-full relative overflow-hidden rounded-lg shadow-lg bg-card">
             <Image
-              src={product.imageUrl}
+              src={product.imageUrl || "https://placehold.co/600x400.png"}
               alt={product.name}
               layout="fill"
               objectFit="contain"

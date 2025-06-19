@@ -1,10 +1,10 @@
 
 "use client";
 
-import React, { useRef, useState, useEffect, useCallback } from 'react';
+import React, { useRef, useState, useEffect, useCallback, useMemo } from 'react';
 import { Banner } from "@/components/Banner";
 import ProductCard from "@/components/ProductCard";
-import { mockProducts, mockCategories, mockPromotions } from "@/data/mockData";
+import { mockCategories, mockPromotions } from "@/data/mockData"; // mockProducts removed
 import type { Product, Category as TopCategoryType } from "@/types";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -21,6 +21,9 @@ import {
 import Autoplay from "embla-carousel-autoplay";
 import InfoBar from '@/components/InfoBar';
 import { cn } from "@/lib/utils";
+import { useProduct } from '@/context/ProductContext'; // Import useProduct
+import { Skeleton } from '@/components/ui/skeleton';
+
 
 const CarouselDots = ({ api, onDotClick }: { api: CarouselApi | undefined, onDotClick: (index: number) => void }) => {
   const [snapCount, setSnapCount] = useState(0);
@@ -66,7 +69,9 @@ const CarouselDots = ({ api, onDotClick }: { api: CarouselApi | undefined, onDot
 
 
 export default function HomePage() {
-  const featuredProducts = mockProducts.slice(0, 8); 
+  const { products: allProducts, loading: productsLoading } = useProduct();
+
+  const featuredProducts = useMemo(() => allProducts.slice(0, 8), [allProducts]);
   const popularProductsPlugin = useRef(
     Autoplay({ delay: 5000, stopOnInteraction: true })
   );
@@ -74,27 +79,46 @@ export default function HomePage() {
   const handlePopularDotClick = useCallback((index: number) => apiPopular?.scrollTo(index), [apiPopular]);
 
 
-  const newReleaseProducts = mockProducts.filter(p => p.isNewRelease).slice(0, 8);
+  const newReleaseProducts = useMemo(() => allProducts.filter(p => p.isNewRelease).slice(0, 8), [allProducts]);
   const newReleasesPlugin = useRef(
     Autoplay({ delay: 4500, stopOnInteraction: true })
   );
   const [apiNewReleases, setApiNewReleases] = useState<CarouselApi>();
   const handleNewReleasesDotClick = useCallback((index: number) => apiNewReleases?.scrollTo(index), [apiNewReleases]);
 
-  const bestSellingProducts = mockProducts.filter(p => (p.rating || 0) >= 4.5).slice(0, 8);
+  const bestSellingProducts = useMemo(() => allProducts.filter(p => (p.rating || 0) >= 4.5).slice(0, 8), [allProducts]);
   const bestSellersPlugin = useRef(
     Autoplay({ delay: 5500, stopOnInteraction: true })
   );
   const [apiBestSellers, setApiBestSellers] = useState<CarouselApi>();
   const handleBestSellersDotClick = useCallback((index: number) => apiBestSellers?.scrollTo(index), [apiBestSellers]);
 
-  const onSaleProducts = mockProducts.filter(p => p.originalPrice && p.originalPrice > p.price).slice(0, 8);
+  const onSaleProducts = useMemo(() => allProducts.filter(p => p.originalPrice && p.originalPrice > p.price).slice(0, 8), [allProducts]);
   const onSaleProductsPlugin = useRef(
     Autoplay({ delay: 6000, stopOnInteraction: true })
   );
   const [apiOnSale, setApiOnSale] = useState<CarouselApi>();
   const handleOnSaleDotClick = useCallback((index: number) => apiOnSale?.scrollTo(index), [apiOnSale]);
 
+  if (productsLoading) {
+    return (
+      <div className="space-y-12">
+        <Skeleton className="h-[40vh] w-full rounded-lg" />
+        <Skeleton className="h-16 w-full" />
+        {[...Array(3)].map((_, i) => (
+          <section key={i}>
+            <div className="flex justify-between items-center mb-6">
+              <Skeleton className="h-8 w-1/3" />
+              <Skeleton className="h-8 w-24" />
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {[...Array(4)].map((_, j) => <Skeleton key={j} className="h-72 w-full rounded-lg" />)}
+            </div>
+          </section>
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-12">
@@ -187,7 +211,7 @@ export default function HomePage() {
         )}
       </section>
 
-      <section aria-labelledby="best-selling-products-heading">
+       <section aria-labelledby="best-selling-products-heading">
         <div className="flex justify-between items-center mb-6">
           <h2 id="best-selling-products-heading" className="font-headline text-3xl font-semibold text-foreground uppercase">Mais Vendidos</h2>
           <Link href="/products" passHref>
@@ -227,6 +251,7 @@ export default function HomePage() {
            <p className="text-muted-foreground">Nenhum produto mais vendido encontrado.</p>
         )}
       </section>
+
 
       <section aria-labelledby="featured-categories-heading">
         <div className="flex justify-between items-center mb-6">
@@ -341,4 +366,3 @@ export default function HomePage() {
     </div>
   );
 }
-

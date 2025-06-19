@@ -1,9 +1,11 @@
+
 import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from '@/context/AuthContext';
 import { CartProvider } from '@/context/CartContext';
-import { BrandProvider } from '@/context/BrandContext'; // Added
+import { BrandProvider } from '@/context/BrandContext';
+import { ProductProvider } from '@/context/ProductContext'; // Added
 import ConditionalLayout from '@/components/layout/ConditionalLayout';
 
 export const metadata: Metadata = {
@@ -27,13 +29,15 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased bg-background text-foreground min-h-screen flex flex-col">
         <AuthProvider>
-          <BrandProvider> {/* Added BrandProvider */}
-            <CartProvider>
-              <ConditionalLayout>
-                {children}
-              </ConditionalLayout>
-              <Toaster />
-            </CartProvider>
+          <BrandProvider>
+            <ProductProvider> {/* Added ProductProvider */}
+              <CartProvider>
+                <ConditionalLayout>
+                  {children}
+                </ConditionalLayout>
+                <Toaster />
+              </CartProvider>
+            </ProductProvider>
           </BrandProvider>
         </AuthProvider>
       </body>

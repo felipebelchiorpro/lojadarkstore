@@ -14,6 +14,9 @@ export interface Product {
   rating?: number; // Average rating
   isNewRelease?: boolean; // Para destacar novos produtos
   salesCount?: number; // For Top 5 Products
+
+  // For dashboard stock page - transient property, not persisted ideally
+  currentEditStock?: number;
 }
 
 export interface Review {

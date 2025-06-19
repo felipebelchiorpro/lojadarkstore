@@ -2,20 +2,28 @@
 "use client";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { mockOrders, mockProducts, mockCategories, mockDashboardMetrics } from "@/data/mockData";
+import { mockOrders, mockCategories, mockDashboardMetrics } from "@/data/mockData"; // mockProducts removed
 import { DollarSign, Package, ShoppingCart, Users, TrendingUp, AlertTriangle, Percent, UserPlus, ListOrdered, BarChartHorizontal, Filter, Brain, MapPin } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip as RechartsTooltip, Legend, PieChart as RechartsPieChart, Pie, Cell, LineChart, Line } from 'recharts';
+import { useProduct } from "@/context/ProductContext"; // Import useProduct
+import { useMemo } from "react";
+import type { Product } from "@/types"; // Import Product type
+import { Skeleton } from '@/components/ui/skeleton';
+
 
 const COLORS_PIE = ['hsl(var(--primary))', 'hsl(var(--secondary))', 'hsl(var(--muted))'];
 
 export default function DashboardPage() {
+  const { products: allProducts, loading: productsLoading } = useProduct();
+
   const totalRevenue = mockOrders.reduce((sum, order) => sum + order.totalAmount, 0);
   const totalOrders = mockOrders.length;
-  const totalProducts = mockProducts.length;
-  const lowStockItems = mockProducts.filter(p => p.stock < 10).length;
+  
+  const totalProducts = useMemo(() => allProducts.length, [allProducts]);
+  const lowStockItems = useMemo(() => allProducts.filter(p => p.stock < 10).length, [allProducts]);
 
   const ticketMedio = totalOrders > 0 ? totalRevenue / totalOrders : 0;
   const taxaConversao = mockDashboardMetrics.totalSessions > 0 ? (totalOrders / mockDashboardMetrics.totalSessions) * 100 : 0;
@@ -46,15 +54,38 @@ export default function DashboardPage() {
     return acc;
   }, [] as { month: string; total: number }[]).sort((a,b) => new Date(`01 ${a.month} 2000`) > new Date(`01 ${b.month} 2000`) ? 1 : -1);
 
-  const topProductsData = [...mockProducts]
-    .sort((a, b) => (b.salesCount || 0) - (a.salesCount || 0))
-    .slice(0, 5)
-    .map(p => ({ name: p.name, Vendas: p.salesCount || 0 }));
+  const topProductsData = useMemo(() => 
+    [...allProducts]
+      .sort((a, b) => (b.salesCount || 0) - (a.salesCount || 0))
+      .slice(0, 5)
+      .map(p => ({ name: p.name, Vendas: p.salesCount || 0 }))
+  , [allProducts]);
 
+  // Assuming mockCategories remains static or is managed elsewhere for now for revenue
   const topCategoriesData = [...mockCategories]
     .sort((a, b) => (b.totalRevenue || 0) - (a.totalRevenue || 0))
     .slice(0, 5)
     .map(c => ({ name: c.name, Receita: c.totalRevenue || 0 }));
+
+
+  if (productsLoading) {
+    return (
+      <div className="space-y-8">
+        <div className="flex justify-between items-center">
+          <Skeleton className="h-10 w-1/2" />
+          <Skeleton className="h-9 w-[180px]" />
+        </div>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {[...Array(7)].map((_, i) => <Skeleton key={i} className="h-28 rounded-lg" />)}
+        </div>
+        <div className="grid gap-6 md:grid-cols-3">
+          <Skeleton className="md:col-span-2 h-[350px] rounded-lg" />
+          <Skeleton className="h-[350px] rounded-lg" />
+        </div>
+      </div>
+    );
+  }
+
 
   return (
     <div className="space-y-8">

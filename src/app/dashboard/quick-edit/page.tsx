@@ -1,28 +1,39 @@
 
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { mockProducts as initialProducts } from "@/data/mockData";
 import type { Product } from "@/types";
 import { useToast } from "@/hooks/use-toast";
 import { Save, XCircle, Edit, PackageSearch, AlertTriangleIcon } from "lucide-react";
+import { useProduct } from '@/context/ProductContext';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface EditFormData {
-  price: string; // Store as string to handle input state easily
+  price: string;
   stock: string;
 }
 
 export default function QuickEditPage() {
-  const [products, setProducts] = useState<Product[]>(initialProducts);
+  const { products: contextProducts, updateProduct: contextUpdateProduct, loading: productsLoading } = useProduct();
   const [searchTerm, setSearchTerm] = useState("");
   const { toast } = useToast();
 
   const [editingProductId, setEditingProductId] = useState<string | null>(null);
   const [editFormData, setEditFormData] = useState<EditFormData>({ price: '', stock: '' });
+
+  // Local state to manage products for this page, initialized from context
+  const [localProducts, setLocalProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    if (!productsLoading) {
+      setLocalProducts(contextProducts.map(p => ({...p}))); // Create a shallow copy for local modifications before saving to context
+    }
+  }, [contextProducts, productsLoading]);
+
 
   const handleEdit = (product: Product) => {
     setEditingProductId(product.id);
@@ -42,6 +53,9 @@ export default function QuickEditPage() {
   };
 
   const handleSave = (productId: string) => {
+    const productToUpdate = localProducts.find(p => p.id === productId);
+    if (!productToUpdate) return;
+
     const priceNum = parseFloat(editFormData.price);
     const stockNum = parseInt(editFormData.stock, 10);
 
@@ -54,20 +68,39 @@ export default function QuickEditPage() {
       return;
     }
 
-    setProducts(prevProducts =>
-      prevProducts.map(p =>
-        p.id === productId ? { ...p, price: priceNum, stock: stockNum } : p
-      )
-    );
-    const productName = products.find(p => p.id === productId)?.name || "Produto";
-    toast({ title: "Salvo!", description: `${productName} atualizado com sucesso.` });
+    const updatedProduct = { ...productToUpdate, price: priceNum, stock: stockNum };
+    contextUpdateProduct(updatedProduct); // Update in context
+    setLocalProducts(prev => prev.map(p => p.id === productId ? updatedProduct : p)); // Update local copy
+
+    toast({ title: "Salvo!", description: `${updatedProduct.name} atualizado com sucesso.` });
     setEditingProductId(null);
   };
 
-  const filteredProducts = products.filter(product =>
+  const filteredProducts = useMemo(() => localProducts.filter(product =>
     product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     product.brand.toLowerCase().includes(searchTerm.toLowerCase())
-  ).sort((a,b) => a.name.localeCompare(b.name));
+  ).sort((a,b) => a.name.localeCompare(b.name)), [localProducts, searchTerm]);
+
+  if (productsLoading) {
+     return (
+      <div className="space-y-6">
+        <Skeleton className="h-10 w-1/3" />
+        <Skeleton className="h-12 w-full" />
+        <div className="bg-card p-0 rounded-lg shadow-md overflow-x-auto">
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="flex items-center space-x-4 p-4 border-b">
+              <Skeleton className="h-10 w-10 rounded-md" />
+              <Skeleton className="h-4 w-1/4" />
+              <Skeleton className="h-8 w-20 ml-auto" />
+              <Skeleton className="h-8 w-20" />
+              <Skeleton className="h-8 w-24" />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
 
   return (
     <div className="space-y-6">
@@ -102,7 +135,7 @@ export default function QuickEditPage() {
               <TableRow key={product.id} className={editingProductId === product.id ? 'bg-muted/60' : ''}>
                 <TableCell>
                   <div className="relative h-10 w-10 rounded-md overflow-hidden bg-muted">
-                    <Image src={product.imageUrl} alt={product.name} layout="fill" objectFit="cover" data-ai-hint="supplement product" />
+                    <Image src={product.imageUrl || "https://placehold.co/600x400.png"} alt={product.name} layout="fill" objectFit="cover" data-ai-hint="supplement product" />
                   </div>
                 </TableCell>
                 <TableCell>

@@ -1,35 +1,50 @@
+
 "use client";
 
 import React, { useState, useEffect, useMemo } from 'react';
 import ProductCard from '@/components/ProductCard';
 import SearchBar from '@/components/SearchBar';
 import ProductFilters, { type Filters } from '@/components/ProductFilters';
-import { mockProducts } from '@/data/mockData';
+// import { mockProducts } from '@/data/mockData'; // Removed
 import type { Product } from '@/types';
 import { useSearchParams } from 'next/navigation';
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useProduct } from '@/context/ProductContext'; // Import useProduct
+import { Skeleton } from '@/components/ui/skeleton';
 
 const ITEMS_PER_PAGE = 8;
 
 export default function ProductsPage() {
+  const { products: allProductsFromContext, loading: productsLoading } = useProduct();
   const searchParams = useSearchParams();
   const initialCategory = searchParams.get('category');
   const initialSearchQuery = searchParams.get('q');
 
-  const [allProducts] = useState<Product[]>(mockProducts);
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>(allProducts);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [searchQuery, setSearchQuery] = useState(initialSearchQuery || '');
   const [filters, setFilters] = useState<Filters>({
     categories: initialCategory ? [initialCategory] : [],
-    priceRange: [0, Math.max(...allProducts.map(p => p.price), 100)],
+    priceRange: [0, 1000], // Will be updated once products load
     brands: [],
   });
   const [currentPage, setCurrentPage] = useState(1);
   const [sortOption, setSortOption] = useState('default');
 
   useEffect(() => {
-    let result = allProducts;
+    if (!productsLoading && allProductsFromContext.length > 0) {
+      const maxPrice = Math.max(...allProductsFromContext.map(p => p.price), 100);
+      setFilters(prevFilters => ({
+        ...prevFilters,
+        priceRange: [0, maxPrice]
+      }));
+    }
+  }, [productsLoading, allProductsFromContext]);
+
+  useEffect(() => {
+    if (productsLoading) return;
+
+    let result = [...allProductsFromContext]; // Work with a copy
 
     // Apply search query
     if (searchQuery) {
@@ -70,10 +85,9 @@ export default function ProductsPage() {
         break;
     }
 
-
     setFilteredProducts(result);
     setCurrentPage(1); // Reset to first page on filter/search change
-  }, [searchQuery, filters, allProducts, sortOption]);
+  }, [searchQuery, filters, allProductsFromContext, sortOption, productsLoading]);
 
   const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
   const paginatedProducts = useMemo(() => {
@@ -87,6 +101,31 @@ export default function ProductsPage() {
       window.scrollTo(0, 0);
     }
   };
+
+  if (productsLoading) {
+    return (
+      <div className="container mx-auto py-8">
+        <div className="mb-8 text-center">
+          <Skeleton className="h-10 w-1/2 mx-auto mb-2" />
+          <Skeleton className="h-6 w-3/4 mx-auto" />
+        </div>
+        <div className="flex flex-col md:flex-row gap-8">
+          <aside className="w-full md:w-1/4 lg:w-1/5">
+            <Skeleton className="h-96 w-full rounded-lg" />
+          </aside>
+          <main className="w-full md:w-3/4 lg:w-4/5">
+            <div className="flex justify-between items-center mb-6">
+              <Skeleton className="h-12 w-1/2" />
+              <Skeleton className="h-10 w-[180px]" />
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+              {[...Array(ITEMS_PER_PAGE)].map((_, i) => <Skeleton key={i} className="h-80 w-full rounded-lg" />)}
+            </div>
+          </main>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto py-8">
