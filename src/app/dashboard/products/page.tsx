@@ -5,20 +5,20 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { PlusCircle, MoreHorizontal, Edit3, Trash2, Search } from "lucide-react";
+import { PlusCircle, MoreHorizontal, Edit3, Trash2, Search, Sparkles } from "lucide-react";
 import Image from "next/image";
 import { mockProducts as initialProducts } from "@/data/mockData";
 import type { Product } from "@/types";
 import ProductForm from "@/components/ProductForm";
 import { useToast } from "@/hooks/use-toast";
 import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
 
 export default function ManageProductsPage() {
   const [products, setProducts] = useState<Product[]>(initialProducts);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-  const [productToDelete, setProductToDelete]
-   = useState<Product | null>(null);
+  const [productToDelete, setProductToDelete] = useState<Product | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const { toast } = useToast();
 
@@ -49,7 +49,15 @@ export default function ManageProductsPage() {
       setProducts(prev => prev.map(p => p.id === data.id ? data : p));
       toast({ title: "Produto Atualizado", description: `${data.name} foi atualizado com sucesso.` });
     } else {
-      setProducts(prev => [data, ...prev]);
+      // Ensure new products get all fields, even optional ones if not provided by form
+      const newProductWithDefaults: Product = {
+        ...data,
+        id: `prod-${Date.now()}`, // Ensure new ID
+        originalPrice: data.originalPrice || undefined,
+        isNewRelease: data.isNewRelease || false,
+        imageUrl: data.imageUrl || "https://placehold.co/600x400.png",
+      };
+      setProducts(prev => [newProductWithDefaults, ...prev]);
       toast({ title: "Produto Adicionado", description: `${data.name} foi adicionado com sucesso.` });
     }
     setIsFormOpen(false);
@@ -89,8 +97,10 @@ export default function ManageProductsPage() {
               <TableHead>Nome</TableHead>
               <TableHead>Categoria</TableHead>
               <TableHead>Marca</TableHead>
-              <TableHead className="text-right">Preço</TableHead>
+              <TableHead className="text-right">Preço Venda</TableHead>
+              <TableHead className="text-right">Preço Original</TableHead>
               <TableHead className="text-right">Estoque</TableHead>
+              <TableHead className="text-center">Status</TableHead>
               <TableHead className="text-center">Ações</TableHead>
             </TableRow>
           </TableHeader>
@@ -105,9 +115,21 @@ export default function ManageProductsPage() {
                 <TableCell className="font-medium">{product.name}</TableCell>
                 <TableCell>{product.category}</TableCell>
                 <TableCell>{product.brand}</TableCell>
-                <TableCell className="text-right">R$ {product.price.toFixed(2).replace('.', ',')}</TableCell>
+                <TableCell className="text-right font-semibold text-primary">
+                  R$ {product.price.toFixed(2).replace('.', ',')}
+                </TableCell>
+                <TableCell className="text-right text-muted-foreground line-through">
+                  {product.originalPrice ? `R$ ${product.originalPrice.toFixed(2).replace('.', ',')}` : '-'}
+                </TableCell>
                 <TableCell className={`text-right font-semibold ${product.stock < 10 ? 'text-red-500' : 'text-green-600'}`}>
                   {product.stock}
+                </TableCell>
+                <TableCell className="text-center">
+                  {product.isNewRelease && (
+                    <Badge variant="outline" className="border-primary text-primary text-xs">
+                      <Sparkles className="mr-1 h-3 w-3" /> Novo
+                    </Badge>
+                  )}
                 </TableCell>
                 <TableCell className="text-center">
                   <DropdownMenu>
@@ -132,7 +154,7 @@ export default function ManageProductsPage() {
               </TableRow>
             )) : (
               <TableRow>
-                <TableCell colSpan={7} className="h-24 text-center text-muted-foreground">
+                <TableCell colSpan={9} className="h-24 text-center text-muted-foreground">
                   Nenhum produto encontrado.
                 </TableCell>
               </TableRow>

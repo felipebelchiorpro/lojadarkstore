@@ -4,8 +4,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter } from '@/components/ui/card'; // Removed CardHeader, CardTitle, CardDescription
-import { ShoppingCart } from 'lucide-react'; // Star removed as it's not in the new design
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { ShoppingCart, Zap } from 'lucide-react';
 import type { Product } from '@/types';
 import { useCart } from '@/context/CartContext';
 import { useToast } from '@/hooks/use-toast';
@@ -27,8 +27,8 @@ export default function ProductCard({ product }: ProductCardProps) {
   };
 
   const hasDiscount = product.originalPrice && product.originalPrice > product.price;
-  const discountPercentage = hasDiscount
-    ? Math.round(((product.originalPrice! - product.price) / product.originalPrice!) * 100)
+  const discountPercentage = hasDiscount && product.originalPrice
+    ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
     : 0;
 
   const installmentPrice = (product.price / 3).toFixed(2).replace('.', ',');
@@ -41,7 +41,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             src={product.imageUrl}
             alt={product.name}
             layout="fill"
-            objectFit="contain" // Use contain to ensure full image is visible
+            objectFit="contain"
             className="transition-transform duration-300 group-hover:scale-105 p-2"
             data-ai-hint="supplement product"
           />
@@ -50,6 +50,16 @@ export default function ProductCard({ product }: ProductCardProps) {
           <div className="absolute top-2 right-2 bg-red-600 text-white text-xs font-semibold px-2 py-1 rounded-md">
             {discountPercentage}% OFF
           </div>
+        )}
+        {product.isNewRelease && !hasDiscount && ( // Show "NOVO!" only if not already showing discount
+           <div className="absolute top-2 left-2 bg-primary text-primary-foreground text-xs font-semibold px-2 py-1 rounded-md flex items-center">
+            <Zap className="h-3 w-3 mr-1" /> NOVO!
+          </div>
+        )}
+         {product.isNewRelease && hasDiscount && ( // If both, place "NOVO!" on left
+            <div className="absolute top-2 left-2 bg-primary text-primary-foreground text-xs font-semibold px-2 py-1 rounded-md flex items-center">
+                <Zap className="h-3 w-3 mr-1" /> NOVO!
+            </div>
         )}
       </div>
       
@@ -63,9 +73,9 @@ export default function ProductCard({ product }: ProductCardProps) {
         
         <div className="mt-auto space-y-1.5">
            <div className="flex items-baseline gap-2">
-            {hasDiscount && (
+            {hasDiscount && product.originalPrice && (
               <p className="text-sm text-neutral-400 line-through">
-                R$ {product.originalPrice!.toFixed(2).replace('.', ',')}
+                R$ {product.originalPrice.toFixed(2).replace('.', ',')}
               </p>
             )}
             <p className="text-xl font-bold text-red-600">

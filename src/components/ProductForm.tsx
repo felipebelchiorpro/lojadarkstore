@@ -1,6 +1,6 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
@@ -8,19 +8,22 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog";
 import type { Product } from "@/types";
-import { mockCategories } from "@/data/mockData";
-import { useEffect } from "react";
+import { mockCategories, mockProducts } from "@/data/mockData"; // mockProducts needed for brand list
+import { useEffect, useMemo } from "react";
 
 const productSchema = z.object({
   name: z.string().min(3, { message: "Nome do produto deve ter pelo menos 3 caracteres." }),
   description: z.string().min(10, { message: "Descrição deve ter pelo menos 10 caracteres." }),
-  price: z.coerce.number().positive({ message: "Preço deve ser um número positivo." }),
+  price: z.coerce.number().positive({ message: "Preço de venda deve ser um número positivo." }),
+  originalPrice: z.coerce.number().positive({ message: "Preço original deve ser um número positivo." }).optional().nullable(),
   category: z.string().min(1, { message: "Selecione uma categoria." }),
-  brand: z.string().min(2, { message: "Marca deve ter pelo menos 2 caracteres." }),
+  brand: z.string().min(1, { message: "Selecione uma marca." }),
   imageUrl: z.string().url({ message: "URL da imagem inválida." }).optional().or(z.literal('')),
   stock: z.coerce.number().int().min(0, { message: "Estoque não pode ser negativo." }),
+  isNewRelease: z.boolean().optional(),
 });
 
 type ProductFormValues = z.infer<typeof productSchema>;
@@ -32,41 +35,53 @@ interface ProductFormProps {
   onOpenChange: (open: boolean) => void;
 }
 
+// Extract unique brands from mockProducts
+const ALL_BRANDS = Array.from(new Set(mockProducts.map(p => p.brand))).sort();
+
+
 export default function ProductForm({ product, onSubmitProduct, open, onOpenChange }: ProductFormProps) {
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(productSchema),
     defaultValues: {
-      name: product?.name || "",
-      description: product?.description || "",
-      price: product?.price || 0,
-      category: product?.category || "",
-      brand: product?.brand || "",
-      imageUrl: product?.imageUrl || "https://placehold.co/600x400.png",
-      stock: product?.stock || 0,
+      name: "",
+      description: "",
+      price: 0,
+      originalPrice: null,
+      category: "",
+      brand: "",
+      imageUrl: "https://placehold.co/600x400.png",
+      stock: 0,
+      isNewRelease: false,
     },
   });
   
   useEffect(() => {
-    if (product) {
-      form.reset({
-        name: product.name,
-        description: product.description,
-        price: product.price,
-        category: product.category,
-        brand: product.brand,
-        imageUrl: product.imageUrl || "https://placehold.co/600x400.png",
-        stock: product.stock,
-      });
-    } else {
-      form.reset({ // Default for new product
-        name: "",
-        description: "",
-        price: 0,
-        category: "",
-        brand: "",
-        imageUrl: "https://placehold.co/600x400.png",
-        stock: 0,
-      });
+    if (open) { // Reset form only when dialog opens or product changes
+      if (product) {
+        form.reset({
+          name: product.name,
+          description: product.description,
+          price: product.price,
+          originalPrice: product.originalPrice || null,
+          category: product.category,
+          brand: product.brand,
+          imageUrl: product.imageUrl || "https://placehold.co/600x400.png",
+          stock: product.stock,
+          isNewRelease: product.isNewRelease || false,
+        });
+      } else {
+        form.reset({ 
+          name: "",
+          description: "",
+          price: 0,
+          originalPrice: null,
+          category: "",
+          brand: "",
+          imageUrl: "https://placehold.co/600x400.png",
+          stock: 0,
+          isNewRelease: false,
+        });
+      }
     }
   }, [product, form, open]);
 
@@ -74,11 +89,13 @@ export default function ProductForm({ product, onSubmitProduct, open, onOpenChan
   const handleSubmit = (data: ProductFormValues) => {
     const finalData: Product = {
       ...data,
-      id: product?.id || `prod-${Date.now()}`, // Generate new ID if not editing
-      imageUrl: data.imageUrl || "https://placehold.co/600x400.png", // Default placeholder if empty
+      id: product?.id || `prod-${Date.now()}`, 
+      imageUrl: data.imageUrl || "https://placehold.co/600x400.png",
+      originalPrice: data.originalPrice || undefined, // Ensure undefined if null/empty
+      isNewRelease: data.isNewRelease || false,
     };
     onSubmitProduct(finalData, !!product);
-    onOpenChange(false); // Close dialog on submit
+    onOpenChange(false); 
   };
 
   return (
@@ -92,7 +109,6 @@ export default function ProductForm({ product, onSubmitProduct, open, onOpenChan
             {product ? "Atualize os detalhes do produto." : "Preencha as informações do novo produto."}
           </DialogDescription>
         </DialogHeader>
-        {/* Using div as form root for react-hook-form */}
         <div>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
@@ -110,7 +126,14 @@ export default function ProductForm({ product, onSubmitProduct, open, onOpenChan
               </div>
             </div>
              <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="price" className="text-right col-span-1">Preço (R$)</Label>
+              <Label htmlFor="originalPrice" className="text-right col-span-1">Preço Original (R$)</Label>
+              <div className="col-span-3">
+                <Input id="originalPrice" type="number" step="0.01" {...form.register("originalPrice")} placeholder="Opcional" className={form.formState.errors.originalPrice ? "border-destructive" : ""} />
+                 {form.formState.errors.originalPrice && <p className="text-xs text-destructive mt-1">{form.formState.errors.originalPrice.message}</p>}
+              </div>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="price" className="text-right col-span-1">Preço Venda (R$)</Label>
               <div className="col-span-3">
                 <Input id="price" type="number" step="0.01" {...form.register("price")} className={form.formState.errors.price ? "border-destructive" : ""} />
                  {form.formState.errors.price && <p className="text-xs text-destructive mt-1">{form.formState.errors.price.message}</p>}
@@ -119,23 +142,44 @@ export default function ProductForm({ product, onSubmitProduct, open, onOpenChan
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="category" className="text-right col-span-1">Categoria</Label>
               <div className="col-span-3">
-                <Select onValueChange={(value) => form.setValue("category", value)} defaultValue={product?.category}>
-                  <SelectTrigger className={form.formState.errors.category ? "border-destructive" : ""}>
-                    <SelectValue placeholder="Selecione uma categoria" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {mockCategories.map(cat => (
-                      <SelectItem key={cat.id} value={cat.name}>{cat.name}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Controller
+                  name="category"
+                  control={form.control}
+                  render={({ field }) => (
+                    <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
+                      <SelectTrigger className={form.formState.errors.category ? "border-destructive" : ""}>
+                        <SelectValue placeholder="Selecione uma categoria" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {mockCategories.map(cat => (
+                          <SelectItem key={cat.id} value={cat.name}>{cat.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
                 {form.formState.errors.category && <p className="text-xs text-destructive mt-1">{form.formState.errors.category.message}</p>}
               </div>
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="brand" className="text-right col-span-1">Marca</Label>
               <div className="col-span-3">
-                <Input id="brand" {...form.register("brand")} className={form.formState.errors.brand ? "border-destructive" : ""} />
+                 <Controller
+                    name="brand"
+                    control={form.control}
+                    render={({ field }) => (
+                        <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
+                        <SelectTrigger className={form.formState.errors.brand ? "border-destructive" : ""}>
+                            <SelectValue placeholder="Selecione uma marca" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {ALL_BRANDS.map(brandName => (
+                            <SelectItem key={brandName} value={brandName}>{brandName}</SelectItem>
+                            ))}
+                        </SelectContent>
+                        </Select>
+                    )}
+                 />
                 {form.formState.errors.brand && <p className="text-xs text-destructive mt-1">{form.formState.errors.brand.message}</p>}
               </div>
             </div>
@@ -152,6 +196,24 @@ export default function ProductForm({ product, onSubmitProduct, open, onOpenChan
                 <Input id="stock" type="number" {...form.register("stock")} className={form.formState.errors.stock ? "border-destructive" : ""} />
                 {form.formState.errors.stock && <p className="text-xs text-destructive mt-1">{form.formState.errors.stock.message}</p>}
               </div>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="isNewRelease" className="text-right col-span-1">Lançamento?</Label>
+                <div className="col-span-3 flex items-center">
+                    <Controller
+                        name="isNewRelease"
+                        control={form.control}
+                        render={({ field }) => (
+                            <Checkbox
+                                id="isNewRelease"
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                                className="mr-2"
+                            />
+                        )}
+                    />
+                    <Label htmlFor="isNewRelease" className="font-normal">Marcar como novo lançamento</Label>
+                </div>
             </div>
           </div>
           <DialogFooter>

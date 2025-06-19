@@ -13,7 +13,7 @@ export const mockProducts: Product[] = [
     name: 'Whey Protein Concentrado (1kg)',
     description: 'Proteína de alta qualidade para ganho de massa muscular. Sabor Baunilha.',
     price: 129.90,
-    originalPrice: 166.54,
+    originalPrice: 159.90, // Added original price
     category: 'GANHO DE MASSA', 
     brand: 'Dark Nutrition',
     imageUrl: 'https://placehold.co/600x400.png',
@@ -21,20 +21,21 @@ export const mockProducts: Product[] = [
     reviews: [mockReviews[0], mockReviews[1]],
     rating: 4.5,
     salesCount: 125,
+    isNewRelease: false,
   },
   {
     id: '2',
     name: 'Creatina Monohidratada (300g)',
     description: 'Aumente sua força e performance nos treinos com nossa creatina pura.',
     price: 79.90,
-    originalPrice: 102.44,
+    // No originalPrice, so it's not on sale
     category: 'ENDURANCE', 
     brand: 'Dark Nutrition',
     imageUrl: 'https://placehold.co/600x400.png',
     stock: 100,
     reviews: [mockReviews[2]],
     rating: 5,
-    isNewRelease: true,
+    isNewRelease: true, // Marked as new release
     salesCount: 210,
   },
   {
@@ -48,13 +49,14 @@ export const mockProducts: Product[] = [
     stock: 75,
     rating: 4.0,
     salesCount: 80,
+    isNewRelease: false,
   },
   {
     id: '4',
     name: 'BCAA 2:1:1 (200g)',
     description: 'Aminoácidos de cadeia ramificada para recuperação muscular. Sabor Limão.',
     price: 69.90,
-    originalPrice: 93.20,
+    originalPrice: 89.90, // Added original price
     category: 'DEFINIÇÃO', 
     brand: 'Dark Nutrition',
     imageUrl: 'https://placehold.co/600x400.png',
@@ -67,14 +69,13 @@ export const mockProducts: Product[] = [
     name: 'Pré-Treino Insano (300g)',
     description: 'Energia explosiva e foco para treinos intensos. Sabor Frutas Vermelhas.',
     price: 149.90,
-    originalPrice: 170.34,
     category: 'Pré Treino', 
     brand: 'Dark Performance',
     imageUrl: 'https://placehold.co/600x400.png',
     stock: 40,
     reviews: [mockReviews[0]],
     rating: 4.8,
-    isNewRelease: true,
+    isNewRelease: true, // Marked as new release
     salesCount: 150,
   },
   {
@@ -94,7 +95,7 @@ export const mockProducts: Product[] = [
     name: 'Barra de Proteína (Caixa com 12)',
     description: 'Lanche proteico prático e delicioso para qualquer hora do dia. Sabor Chocolate.',
     price: 99.90,
-    originalPrice: 110.00,
+    originalPrice: 119.90, // Added original price
     category: 'Proteínas', 
     brand: 'Dark Nutrition',
     imageUrl: 'https://placehold.co/600x400.png',
@@ -120,7 +121,6 @@ export const mockProducts: Product[] = [
     name: 'Termogênico Fire Up (60 caps)',
     description: 'Acelere seu metabolismo e queime mais gordura. Fórmula potente.',
     price: 119.90,
-    originalPrice: 140.00,
     category: 'EMAGRECIMENTO',
     brand: 'Dark Performance',
     imageUrl: 'https://placehold.co/600x400.png',

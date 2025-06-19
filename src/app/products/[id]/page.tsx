@@ -7,11 +7,12 @@ import type { Product, Review } from '@/types';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/context/CartContext';
 import { useToast } from '@/hooks/use-toast';
-import { Star, ShoppingCart, ChevronLeft, ShieldCheck } from 'lucide-react';
+import { Star, ShoppingCart, ChevronLeft, ShieldCheck, Zap } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from '@/components/ui/separator';
 import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Badge } from '@/components/ui/badge';
 
 // Helper function to format dates (can be moved to a utils file)
 const formatDate = (dateString: string) => {
@@ -68,6 +69,8 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
   const averageRating = product.reviews && product.reviews.length > 0
     ? product.reviews.reduce((acc, review) => acc + review.rating, 0) / product.reviews.length
     : product.rating || 0;
+  
+  const hasDiscount = product.originalPrice && product.originalPrice > product.price;
 
   return (
     <div className="container mx-auto py-8 md:py-12 px-4">
@@ -90,6 +93,11 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
               className="p-4"
               data-ai-hint="supplement product"
             />
+             {product.isNewRelease && (
+              <Badge variant="default" className="absolute top-3 left-3 bg-primary text-primary-foreground text-sm py-1 px-3">
+                <Zap className="h-4 w-4 mr-1.5" /> NOVO!
+              </Badge>
+            )}
           </div>
           {/* Thumbnail images can be added here if multiple images per product */}
         </div>
@@ -111,7 +119,16 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
             </div>
           )}
 
-          <p className="text-3xl font-semibold text-primary">R$ {product.price.toFixed(2).replace('.', ',')}</p>
+          <div className="flex items-baseline space-x-2">
+            <p className={`text-3xl font-semibold ${hasDiscount ? 'text-destructive' : 'text-primary'}`}>
+              R$ {product.price.toFixed(2).replace('.', ',')}
+            </p>
+            {hasDiscount && product.originalPrice && (
+              <p className="text-xl text-muted-foreground line-through">
+                R$ {product.originalPrice.toFixed(2).replace('.', ',')}
+              </p>
+            )}
+          </div>
           
           <div className="flex items-center space-x-3">
             <label htmlFor="quantity" className="text-sm font-medium">Quantidade:</label>

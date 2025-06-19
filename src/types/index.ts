@@ -5,14 +5,14 @@ export interface Product {
   name: string;
   description: string;
   price: number;
-  originalPrice?: number; // Added for discount display
+  originalPrice?: number; // Preço original para mostrar desconto
   category: string;
   brand: string;
   imageUrl: string;
   stock: number;
   reviews?: Review[];
   rating?: number; // Average rating
-  isNewRelease?: boolean; // Added for new releases
+  isNewRelease?: boolean; // Para destacar novos produtos
   salesCount?: number; // For Top 5 Products
 }
 
