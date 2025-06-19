@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Home, Package, BarChart3, Layers, LogOut, Settings, UserCircle, Edit } from 'lucide-react'; // Adicionado Edit
+import { Home, Package, BarChart3, Layers, LogOut, Settings, UserCircle, Edit, Tags, LayoutGrid } from 'lucide-react'; // Adicionado Tags, LayoutGrid
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/AuthContext';
 import { Separator } from '@/components/ui/separator';
@@ -41,7 +41,9 @@ export default function DashboardNav() {
     { href: '/dashboard/products', icon: Package, label: 'Gerenciar Produtos' },
     { href: '/dashboard/sales', icon: BarChart3, label: 'Relatório de Vendas' },
     { href: '/dashboard/stock', icon: Layers, label: 'Controle de Estoque' },
-    { href: '/dashboard/quick-edit', icon: Edit, label: 'Edição Rápida' }, // Novo item
+    { href: '/dashboard/quick-edit', icon: Edit, label: 'Edição Rápida' },
+    { href: '/dashboard/categories', icon: LayoutGrid, label: 'Gerenciar Categorias' },
+    { href: '/dashboard/brands', icon: Tags, label: 'Gerenciar Marcas' },
     // { href: '/dashboard/settings', icon: Settings, label: 'Configurações' }, // Example for future expansion
   ];
 
@@ -88,4 +90,3 @@ export default function DashboardNav() {
     </aside>
   );
 }
-
