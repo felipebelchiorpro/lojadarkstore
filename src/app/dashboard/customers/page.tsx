@@ -10,9 +10,10 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from '@/hooks/use-toast';
-import { Users, Eye, ShieldAlert, Info } from 'lucide-react';
+import { Users, Eye, ShieldAlert, Info, PlusCircle } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
+import CustomerFormDialog from '@/components/CustomerFormDialog'; // Import the new component
 
 const formatDate = (dateString?: string) => {
   if (!dateString) return 'N/A';
@@ -23,12 +24,13 @@ const formatDate = (dateString?: string) => {
 };
 
 export default function ManageCustomersPage() {
-  const { getAllRegisteredCustomers, customerAuthLoading } = useCustomerAuth();
+  const { getAllRegisteredCustomers, customerAuthLoading, registerCustomerByAdmin } = useCustomerAuth();
   const [customers, setCustomers] = useState<CustomerUser[]>([]);
   const [selectedCustomer, setSelectedCustomer] = useState<CustomerUser | null>(null);
   const [isPasswordPromptOpen, setIsPasswordPromptOpen] = useState(false);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [adminPassword, setAdminPassword] = useState('');
+  const [isAddCustomerDialogOpen, setIsAddCustomerDialogOpen] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -37,15 +39,21 @@ export default function ManageCustomersPage() {
     }
   }, [getAllRegisteredCustomers, customerAuthLoading]);
 
+  // Re-fetch customers when one is added to see it immediately
+  const handleCustomerAdded = () => {
+     if (!customerAuthLoading) {
+      setCustomers(getAllRegisteredCustomers());
+    }
+  };
+
   const handleViewDetails = (customer: CustomerUser) => {
     setSelectedCustomer(customer);
     setIsPasswordPromptOpen(true);
-    setAdminPassword(''); 
+    setAdminPassword('');
   };
 
   const handlePasswordSubmit = () => {
-    // Simulated admin password check
-    if (adminPassword === 'password') { 
+    if (adminPassword === 'password') {
       setIsPasswordPromptOpen(false);
       setIsDetailsModalOpen(true);
     } else {
@@ -61,6 +69,7 @@ export default function ManageCustomersPage() {
     return (
       <div className="space-y-4 sm:space-y-6">
         <Skeleton className="h-9 sm:h-10 w-full sm:w-1/3" />
+        <Skeleton className="h-9 sm:h-10 w-full sm:w-40" />
         <div className="bg-card p-0 rounded-lg shadow-md overflow-hidden">
           {[...Array(5)].map((_, i) => (
             <div key={i} className="flex items-center space-x-3 sm:space-x-4 p-3 sm:p-4 border-b">
@@ -78,12 +87,17 @@ export default function ManageCustomersPage() {
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      <h1 className="font-headline text-2xl sm:text-3xl font-bold text-foreground flex items-center">
-        <Users className="mr-2 sm:mr-3 h-6 w-6 sm:h-8 sm:w-8 text-primary" /> Gerenciar Clientes
-      </h1>
+      <div className="flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-4">
+        <h1 className="font-headline text-2xl sm:text-3xl font-bold text-foreground flex items-center">
+          <Users className="mr-2 sm:mr-3 h-6 w-6 sm:h-8 sm:w-8 text-primary" /> Gerenciar Clientes
+        </h1>
+        <Button onClick={() => setIsAddCustomerDialogOpen(true)} className="bg-primary hover:bg-primary/90 text-primary-foreground w-full sm:w-auto">
+          <PlusCircle className="mr-2 h-4 w-4 sm:h-5 sm:w-5" /> Adicionar Cliente
+        </Button>
+      </div>
 
       <div className="bg-card p-0 rounded-lg shadow-md overflow-x-auto">
-        <ScrollArea className="h-[calc(100vh-15rem)] sm:h-[calc(100vh-18rem)]">
+        <ScrollArea className="h-[calc(100vh-18rem)] sm:h-[calc(100vh-22rem)]">
           <Table>
             <TableHeader className="sticky top-0 bg-card z-10">
               <TableRow>
@@ -188,7 +202,6 @@ export default function ManageCustomersPage() {
                 <span className="font-semibold text-foreground">Registrado em: </span>
                 <span className="text-muted-foreground">{formatDate(selectedCustomer.registeredAt)}</span>
               </div>
-              {/* Add more "sensitive" details here as needed in a real application */}
                <div className="mt-4 pt-3 border-t border-border/40">
                  <p className="text-xs text-muted-foreground italic">
                    Nota: Em um sistema real, apenas dados não críticos seriam exibidos aqui. Senhas de clientes NUNCA são armazenadas ou exibidas.
@@ -203,6 +216,13 @@ export default function ManageCustomersPage() {
           </DialogContent>
         </Dialog>
       )}
+
+      {/* Add New Customer Dialog */}
+      <CustomerFormDialog
+        open={isAddCustomerDialogOpen}
+        onOpenChange={setIsAddCustomerDialogOpen}
+        onCustomerAdded={handleCustomerAdded}
+      />
     </div>
   );
 }

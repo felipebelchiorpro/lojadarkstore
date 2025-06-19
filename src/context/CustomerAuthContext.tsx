@@ -1,34 +1,35 @@
 
-
 "use client";
 
 import type { CustomerUser } from '@/types';
 import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import { useToast } from '@/hooks/use-toast'; // Added for feedback
 
 interface CustomerAuthContextType {
   isCustomerAuthenticated: boolean;
   customer: CustomerUser | null;
-  customerLogin: (email: string, name?: string) => void; 
+  customerLogin: (email: string, name?: string) => void;
   customerLogout: () => void;
   customerAuthLoading: boolean;
-  getAllRegisteredCustomers: () => CustomerUser[]; // New function
+  getAllRegisteredCustomers: () => CustomerUser[];
+  registerCustomerByAdmin: (data: { name: string; email: string }) => Promise<boolean>; // New function
 }
 
 const CustomerAuthContext = createContext<CustomerAuthContextType | undefined>(undefined);
 
 const CUSTOMER_AUTH_STORAGE_KEY = 'darkstore-customer-auth';
-const ALL_CUSTOMERS_STORAGE_KEY = 'darkstore-all-customers'; // New key for all customers
+const ALL_CUSTOMERS_STORAGE_KEY = 'darkstore-all-customers';
 
 export const CustomerAuthProvider = ({ children }: { children: ReactNode }) => {
   const [customer, setCustomer] = useState<CustomerUser | null>(null);
   const [isCustomerAuthenticated, setIsCustomerAuthenticated] = useState<boolean>(false);
   const [customerAuthLoading, setCustomerAuthLoading] = useState<boolean>(true);
-  const [allCustomers, setAllCustomers] = useState<CustomerUser[]>([]); // State for all customers
+  const [allCustomers, setAllCustomers] = useState<CustomerUser[]>([]);
   const router = useRouter();
+  const { toast } = useToast();
 
   useEffect(() => {
-    // Load current logged-in customer
     try {
       const storedAuth = localStorage.getItem(CUSTOMER_AUTH_STORAGE_KEY);
       if (storedAuth) {
@@ -43,7 +44,6 @@ export const CustomerAuthProvider = ({ children }: { children: ReactNode }) => {
       localStorage.removeItem(CUSTOMER_AUTH_STORAGE_KEY);
     }
 
-    // Load all registered customers
     try {
       const storedAllCustomers = localStorage.getItem(ALL_CUSTOMERS_STORAGE_KEY);
       if (storedAllCustomers) {
@@ -66,13 +66,13 @@ export const CustomerAuthProvider = ({ children }: { children: ReactNode }) => {
 
   const customerLogin = (email: string, name: string = `Cliente ${email.split('@')[0]}`) => {
     const customerId = `cust-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
-    const newCustomer: CustomerUser = { 
-      id: customerId, 
-      email, 
+    const newCustomer: CustomerUser = {
+      id: customerId,
+      email,
       name,
-      registeredAt: new Date().toISOString() 
+      registeredAt: new Date().toISOString()
     };
-    
+
     setCustomer(newCustomer);
     setIsCustomerAuthenticated(true);
     try {
@@ -81,11 +81,10 @@ export const CustomerAuthProvider = ({ children }: { children: ReactNode }) => {
       console.error("Failed to save customer auth data to localStorage", error);
     }
 
-    // Add to all customers list if not already present (simulates registration)
     setAllCustomers(prevAllCustomers => {
       const customerExists = prevAllCustomers.some(c => c.email === email);
       if (!customerExists) {
-        const updatedAll = [...prevAllCustomers, newCustomer];
+        const updatedAll = [...prevAllCustomers, newCustomer].sort((a,b) => (a.name || "").localeCompare(b.name || ""));
         persistAllCustomers(updatedAll);
         return updatedAll;
       }
@@ -101,21 +100,57 @@ export const CustomerAuthProvider = ({ children }: { children: ReactNode }) => {
     } catch (error) {
       console.error("Failed to remove customer auth data from localStorage", error);
     }
-    router.push('/account/login'); 
+    router.push('/account/login');
   };
 
   const getAllRegisteredCustomers = useCallback(() => {
-    return [...allCustomers].sort((a, b) => new Date(b.registeredAt || 0).getTime() - new Date(a.registeredAt || 0).getTime());
+    return [...allCustomers].sort((a, b) => (a.name || "").localeCompare(b.name || ""));
   }, [allCustomers]);
 
+  const registerCustomerByAdmin = useCallback(async (data: { name: string; email: string }): Promise<boolean> => {
+    const { name, email } = data;
+    const customerExists = allCustomers.some(c => c.email.toLowerCase() === email.toLowerCase());
+
+    if (customerExists) {
+      toast({
+        title: "Erro ao Adicionar Cliente",
+        description: `Um cliente com o email "${email}" já existe.`,
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    const customerId = `cust-admin-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
+    const newCustomer: CustomerUser = {
+      id: customerId,
+      email: email,
+      name: name,
+      registeredAt: new Date().toISOString(),
+    };
+
+    setAllCustomers(prevAllCustomers => {
+      const updatedAll = [...prevAllCustomers, newCustomer].sort((a,b) => (a.name || "").localeCompare(b.name || ""));
+      persistAllCustomers(updatedAll);
+      return updatedAll;
+    });
+
+    toast({
+      title: "Cliente Adicionado!",
+      description: `${name} foi adicionado com sucesso.`,
+    });
+    return true;
+  }, [allCustomers, persistAllCustomers, toast]);
+
+
   return (
-    <CustomerAuthContext.Provider value={{ 
-      isCustomerAuthenticated, 
-      customer, 
-      customerLogin, 
-      customerLogout, 
+    <CustomerAuthContext.Provider value={{
+      isCustomerAuthenticated,
+      customer,
+      customerLogin,
+      customerLogout,
       customerAuthLoading,
-      getAllRegisteredCustomers 
+      getAllRegisteredCustomers,
+      registerCustomerByAdmin
     }}>
       {children}
     </CustomerAuthContext.Provider>
