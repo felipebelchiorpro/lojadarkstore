@@ -21,9 +21,14 @@ import Autoplay from "embla-carousel-autoplay";
 import InfoBar from '@/components/InfoBar';
 
 export default function HomePage() {
-  const featuredProducts = mockProducts.slice(0, 8);
+  const featuredProducts = mockProducts.slice(0, 8); // Using more products for demonstration
   const popularProductsPlugin = useRef(
     Autoplay({ delay: 5000, stopOnInteraction: true })
+  );
+
+  const newReleaseProducts = mockProducts.filter(p => p.isNewRelease).slice(0, 8);
+  const newReleasesPlugin = useRef(
+    Autoplay({ delay: 4500, stopOnInteraction: true })
   );
 
   const bestSellingProducts = mockProducts.filter(p => (p.rating || 0) >= 4.5).slice(0, 8);
@@ -35,6 +40,7 @@ export default function HomePage() {
   const onSaleProductsPlugin = useRef(
     Autoplay({ delay: 6000, stopOnInteraction: true })
   );
+
 
   return (
     <div className="space-y-12">
@@ -87,14 +93,14 @@ export default function HomePage() {
             className="w-full"
             opts={{
               align: "start",
-              loop: featuredProducts.length > 3, // Loop if enough items for md view
+              loop: featuredProducts.length > 3, 
             }}
             onMouseEnter={popularProductsPlugin.current.stop}
             onMouseLeave={popularProductsPlugin.current.reset}
           >
             <CarouselContent className="-ml-4">
               {featuredProducts.map((product: Product) => (
-                <CarouselItem key={product.id} className="pl-4 basis-full sm:basis-1/2 md:basis-1/4">
+                <CarouselItem key={product.id} className="pl-4 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
                   <div className="h-full p-1">
                     <ProductCard product={product} />
                   </div>
@@ -106,6 +112,43 @@ export default function HomePage() {
           </Carousel>
         ) : (
           <p className="text-muted-foreground">Nenhum produto popular encontrado.</p>
+        )}
+      </section>
+
+      <section aria-labelledby="new-releases-heading">
+        <div className="flex justify-between items-center mb-6">
+          <h2 id="new-releases-heading" className="font-headline text-3xl font-semibold text-foreground uppercase">Lançamentos</h2>
+          <Link href="/products?tag=lancamentos" passHref>
+            <Button variant="ghost" className="text-primary hover:text-primary/90">
+              Ver Todos <ChevronRight className="ml-1 h-4 w-4" />
+            </Button>
+          </Link>
+        </div>
+        {newReleaseProducts.length > 0 ? (
+          <Carousel
+            plugins={[newReleasesPlugin.current]}
+            className="w-full"
+            opts={{
+              align: "start",
+              loop: newReleaseProducts.length > 3,
+            }}
+            onMouseEnter={newReleasesPlugin.current.stop}
+            onMouseLeave={newReleasesPlugin.current.reset}
+          >
+            <CarouselContent className="-ml-4">
+              {newReleaseProducts.map((product: Product) => (
+                <CarouselItem key={product.id} className="pl-4 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
+                  <div className="h-full p-1">
+                    <ProductCard product={product} />
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious className="absolute left-[-20px] md:left-[-25px] top-1/2 -translate-y-1/2 z-10 bg-background/80 hover:bg-background text-foreground border-border shadow-md hidden sm:flex" />
+            <CarouselNext className="absolute right-[-20px] md:right-[-25px] top-1/2 -translate-y-1/2 z-10 bg-background/80 hover:bg-background text-foreground border-border shadow-md hidden sm:flex" />
+          </Carousel>
+        ) : (
+           <p className="text-muted-foreground">Nenhum lançamento encontrado.</p>
         )}
       </section>
 
@@ -131,7 +174,7 @@ export default function HomePage() {
           >
             <CarouselContent className="-ml-4">
               {bestSellingProducts.map((product: Product) => (
-                <CarouselItem key={product.id} className="pl-4 basis-full sm:basis-1/2 md:basis-1/4">
+                <CarouselItem key={product.id} className="pl-4 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
                   <div className="h-full p-1">
                     <ProductCard product={product} />
                   </div>
@@ -151,7 +194,7 @@ export default function HomePage() {
           <h2 id="on-sale-products-heading" className="font-headline text-3xl font-semibold text-foreground uppercase">Em Promoção</h2>
           <Link href="/products" passHref>
             <Button variant="ghost" className="text-primary hover:text-primary/90">
-              Ver Todas <ChevronRight className="ml-1 h-4 w-4" />
+              Ver Todos <ChevronRight className="ml-1 h-4 w-4" />
             </Button>
           </Link>
         </div>
@@ -168,7 +211,7 @@ export default function HomePage() {
           >
             <CarouselContent className="-ml-4">
               {onSaleProducts.map((product: Product) => (
-                <CarouselItem key={product.id} className="pl-4 basis-full sm:basis-1/2 md:basis-1/4">
+                <CarouselItem key={product.id} className="pl-4 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
                   <div className="h-full p-1">
                     <ProductCard product={product} />
                   </div>

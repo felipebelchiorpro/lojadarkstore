@@ -12,6 +12,7 @@ export interface Product {
   stock: number;
   reviews?: Review[];
   rating?: number; // Average rating
+  isNewRelease?: boolean; // Added for new releases
 }
 
 export interface Review {

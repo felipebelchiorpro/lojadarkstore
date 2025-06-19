@@ -33,6 +33,7 @@ export const mockProducts: Product[] = [
     stock: 100,
     reviews: [mockReviews[2]],
     rating: 5,
+    isNewRelease: true,
   },
   {
     id: '3',
@@ -70,6 +71,7 @@ export const mockProducts: Product[] = [
     stock: 40,
     reviews: [mockReviews[0]],
     rating: 4.8,
+    isNewRelease: true,
   },
   {
     id: '6',
@@ -93,6 +95,30 @@ export const mockProducts: Product[] = [
     imageUrl: 'https://placehold.co/600x400.png',
     stock: 25,
     rating: 4.3,
+  },
+  {
+    id: '8',
+    name: 'Glutamina Micronizada (300g)',
+    description: 'Suporte para o sistema imunológico e recuperação muscular. Sem sabor.',
+    price: 95.50,
+    category: 'GANHO DE MASSA',
+    brand: 'Dark Nutrition',
+    imageUrl: 'https://placehold.co/600x400.png',
+    stock: 35,
+    rating: 4.7,
+    isNewRelease: true,
+  },
+  {
+    id: '9',
+    name: 'Termogênico Fire Up (60 caps)',
+    description: 'Acelere seu metabolismo e queime mais gordura. Fórmula potente.',
+    price: 119.90,
+    originalPrice: 140.00,
+    category: 'EMAGRECIMENTO',
+    brand: 'Dark Performance',
+    imageUrl: 'https://placehold.co/600x400.png',
+    stock: 20,
+    rating: 4.4,
   },
 ];
 
