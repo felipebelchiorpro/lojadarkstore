@@ -136,6 +136,48 @@ export const mockProducts: Product[] = [
     rating: 4.4,
     salesCount: 60,
   },
+  {
+    id: '10',
+    name: 'Albumina Pura (500g)',
+    description: 'Proteína de clara de ovo de alta biodisponibilidade. Ideal para intolerantes à lactose.',
+    price: 65.00,
+    category: 'Proteínas',
+    brand: 'Dark Vitality',
+    imageUrl: 'https://placehold.co/600x400.png',
+    stock: 45,
+    barcode: 'ALBUMINA500G',
+    rating: 4.1,
+    salesCount: 50,
+    isNewRelease: false,
+  },
+  {
+    id: '11',
+    name: 'Cafeína Anidra (60 caps)',
+    description: 'Máxima concentração de cafeína para energia e foco. 420mg por cápsula.',
+    price: 45.90,
+    originalPrice: 55.00,
+    category: 'Pré Treino',
+    brand: 'Dark Performance',
+    imageUrl: 'https://placehold.co/600x400.png',
+    stock: 80,
+    barcode: 'CAFEINA60CAP',
+    rating: 4.9,
+    salesCount: 180,
+    isNewRelease: true,
+  },
+  {
+    id: '12',
+    name: 'ZMA Complex (90 caps)',
+    description: 'Zinco, Magnésio e Vitamina B6 para otimização hormonal e recuperação.',
+    price: 72.00,
+    category: 'Vitaminas e Saude',
+    brand: 'Dark Vitality',
+    imageUrl: 'https://placehold.co/600x400.png',
+    stock: 55,
+    barcode: 'ZMA90CAP',
+    rating: 4.5,
+    salesCount: 70,
+  },
 ];
 
 export const mockCategories: Category[] = [
@@ -184,57 +226,131 @@ export const mockPromotions: Promotion[] = [
 
 export const mockOrders: Order[] = [
   {
-    id: 'order1',
-    userId: 'user123',
+    id: 'order-dk001-alpha',
+    userId: 'alex-santos-01',
     items: [
       { ...mockProducts[0], quantity: 1, originalPrice: mockProducts[0].originalPrice },
       { ...mockProducts[1], quantity: 2, originalPrice: mockProducts[1].originalPrice },
     ],
     totalAmount: (mockProducts[0].price * 1) + (mockProducts[1].price * 2),
-    orderDate: '2024-07-01',
+    orderDate: '2024-07-21',
     status: 'Delivered',
   },
   {
-    id: 'order2',
-    userId: 'user456',
+    id: 'order-dk002-beta',
+    userId: 'bruna-costa-07',
     items: [{ ...mockProducts[4], quantity: 1, originalPrice: mockProducts[4].originalPrice }],
     totalAmount: mockProducts[4].price * 1,
-    orderDate: '2024-07-10',
+    orderDate: '2024-07-20',
     status: 'Shipped',
   },
   {
-    id: 'order3',
-    userId: 'user789',
+    id: 'order-dk003-gamma',
+    userId: 'carlos-lima-15',
     items: [
       { ...mockProducts[2], quantity: 1 }, 
       { ...mockProducts[5], quantity: 1 }, 
     ],
     totalAmount: mockProducts[2].price + mockProducts[5].price,
-    orderDate: '2024-07-15',
+    orderDate: '2024-07-19',
     status: 'Pending',
   },
   {
-    id: 'order4',
-    userId: 'user101',
+    id: 'order-dk004-delta',
+    userId: 'daniela-fernandes-22',
     items: [
       { ...mockProducts[0], quantity: 2, originalPrice: mockProducts[0].originalPrice },
       { ...mockProducts[8], quantity: 1, originalPrice: mockProducts[8].originalPrice },
     ],
     totalAmount: (mockProducts[0].price * 2) + mockProducts[8].price,
-    orderDate: '2024-06-20',
+    orderDate: '2024-07-18',
     status: 'Delivered',
   },
    {
-    id: 'order5',
-    userId: 'user102',
+    id: 'order-dk005-epsilon',
+    userId: 'eduardo-moraes-30',
     items: [
       { ...mockProducts[1], quantity: 1, originalPrice: mockProducts[1].originalPrice },
       { ...mockProducts[4], quantity: 1, originalPrice: mockProducts[4].originalPrice },
     ],
     totalAmount: mockProducts[1].price + mockProducts[4].price,
-    orderDate: '2024-06-15',
+    orderDate: '2024-07-17',
     status: 'Cancelled',
   },
+  {
+    id: 'order-dk006-zeta',
+    userId: 'fernanda-abreu-11',
+    items: [
+      { ...mockProducts[6], quantity: 1, originalPrice: mockProducts[6].originalPrice },
+      { ...mockProducts[7], quantity: 1, originalPrice: mockProducts[7].originalPrice },
+    ],
+    totalAmount: mockProducts[6].price + mockProducts[7].price,
+    orderDate: '2024-07-16',
+    status: 'Shipped',
+  },
+  {
+    id: 'order-dk007-eta',
+    userId: 'gabriel-rocha-03',
+    items: [
+      { ...mockProducts[9], quantity: 3, originalPrice: mockProducts[9].originalPrice },
+    ],
+    totalAmount: mockProducts[9].price * 3,
+    orderDate: '2024-07-15',
+    status: 'Pending',
+  },
+  {
+    id: 'order-dk008-theta',
+    userId: 'helena-vasques-09',
+    items: [
+      { ...mockProducts[10], quantity: 1, originalPrice: mockProducts[10].originalPrice },
+      { ...mockProducts[11], quantity: 1, originalPrice: mockProducts[11].originalPrice },
+    ],
+    totalAmount: mockProducts[10].price + mockProducts[11].price,
+    orderDate: '2024-07-14',
+    status: 'Delivered',
+  },
+  {
+    id: 'order-dk009-iota',
+    userId: 'igor-nogueira-27',
+    items: [
+      { ...mockProducts[3], quantity: 2, originalPrice: mockProducts[3].originalPrice },
+    ],
+    totalAmount: mockProducts[3].price * 2,
+    orderDate: '2024-07-13',
+    status: 'Cancelled',
+  },
+  {
+    id: 'order-dk010-kappa',
+    userId: 'julia-menezes-19',
+    items: [
+      { ...mockProducts[0], quantity: 1, originalPrice: mockProducts[0].originalPrice },
+      { ...mockProducts[2], quantity: 1, originalPrice: mockProducts[2].originalPrice },
+      { ...mockProducts[5], quantity: 1, originalPrice: mockProducts[5].originalPrice },
+    ],
+    totalAmount: mockProducts[0].price + mockProducts[2].price + mockProducts[5].price,
+    orderDate: '2024-07-12',
+    status: 'Shipped',
+  },
+  {
+    id: 'order-dk011-lambda',
+    userId: 'lucas-almeida-05',
+    items: [
+      { ...mockProducts[1], quantity: 5, originalPrice: mockProducts[1].originalPrice },
+    ],
+    totalAmount: mockProducts[1].price * 5,
+    orderDate: '2024-07-11',
+    status: 'Pending',
+  },
+  {
+    id: 'order-dk012-mu',
+    userId: 'marcela-gomes-12',
+    items: [
+      { ...mockProducts[8], quantity: 2, originalPrice: mockProducts[8].originalPrice },
+    ],
+    totalAmount: mockProducts[8].price * 2,
+    orderDate: '2024-07-10',
+    status: 'Delivered',
+  }
 ];
 
 export const mockDashboardMetrics = {
@@ -280,3 +396,4 @@ export const mockPackingOrders: PackingOrder[] = [
     ],
   }
 ];
+

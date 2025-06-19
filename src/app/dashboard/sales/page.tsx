@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState } from 'react';
@@ -33,15 +34,6 @@ export default function SalesReportPage() {
     currentPage * ITEMS_PER_PAGE
   );
 
-  const getStatusVariant = (status: Order['status']): "default" | "secondary" | "destructive" | "outline" => {
-    switch (status) {
-      case 'Delivered': return 'default'; // Using 'default' which is primary color based on theme
-      case 'Shipped': return 'secondary'; // Or some other variant
-      case 'Pending': return 'outline'; // Example: Yellowish or orange
-      case 'Cancelled': return 'destructive';
-      default: return 'outline';
-    }
-  };
   
   const getStatusColorClass = (status: Order['status']): string => {
     switch (status) {
