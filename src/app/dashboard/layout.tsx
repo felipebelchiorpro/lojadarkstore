@@ -10,6 +10,8 @@ import { Button } from '@/components/ui/button';
 import { Menu as MenuIcon, X } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
 import Image from 'next/image'; // For logo in mobile dash nav
+import Link from 'next/link';
+
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   const { isAuthenticated, loading } = useAuth();
@@ -79,7 +81,3 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     </div>
   );
 }
-
-// Helper Link component for mobile header logo, if needed for specific styling
-import Link from 'next/link';
-
