@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import InfoBar from '@/components/InfoBar';
+import BrandCarousel from '@/components/BrandCarousel'; // Import the new component
 import { cn } from "@/lib/utils";
 import { useProduct } from '@/context/ProductContext'; 
 import { Skeleton } from '@/components/ui/skeleton';
@@ -325,6 +326,8 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      <BrandCarousel />
 
       <section aria-labelledby="on-sale-products-heading">
         <div className="flex justify-between items-center mb-4 sm:mb-6">
