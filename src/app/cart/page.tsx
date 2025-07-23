@@ -6,9 +6,10 @@ import CartItemDisplay from '@/components/CartItemDisplay';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import Link from 'next/link';
-import { ShoppingBag, Trash2, CreditCard } from 'lucide-react';
+import { ShoppingBag, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 export default function CartPage() {
   const { cartItems, getCartTotal, clearCart, getCartItemCount } = useCart();
@@ -22,9 +23,17 @@ export default function CartPage() {
 
   const handleCheckout = () => {
     toast({
-      title: "Pedido Simulado!",
-      description: "Seu pedido foi 'finalizado' com sucesso. (Simulação)",
+      title: "Redirecionando para o Mercado Pago...",
+      description: "Você será levado para um ambiente seguro para finalizar sua compra.",
     });
+    // Simulate API call to backend, which would create a Mercado Pago preference
+    // and return a URL. Then we redirect.
+    setTimeout(() => {
+        // In a real scenario, this would clear the cart only after a successful payment webhook.
+        // For simulation, we clear it upon starting the checkout.
+        clearCart(); 
+        router.push('/checkout/success'); 
+    }, 1500);
   };
 
   const handleClearCart = () => {
@@ -100,8 +109,8 @@ export default function CartPage() {
                 </div>
               </CardContent>
               <CardFooter className="flex flex-col gap-2.5 sm:gap-3">
-                <Button size="lg" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground text-base sm:text-lg py-2.5 sm:py-3" onClick={handleCheckout}>
-                  <CreditCard className="mr-2 h-4 w-4 sm:h-5 sm:w-5" /> Finalizar Compra (Simulado)
+                <Button size="lg" className="w-full bg-blue-500 hover:bg-blue-600 text-white text-base sm:text-lg py-2.5 sm:py-3" onClick={handleCheckout}>
+                  <Image src="https://placehold.co/100x25.png" alt="Mercado Pago" width={100} height={25} className="mr-2" data-ai-hint="mercadopago logo" /> Finalizar com Mercado Pago
                 </Button>
                 <Link href="/products" className="w-full" passHref>
                   <Button variant="outline" size="lg" className="w-full text-sm sm:text-base">
@@ -116,4 +125,3 @@ export default function CartPage() {
     </div>
   );
 }
-
