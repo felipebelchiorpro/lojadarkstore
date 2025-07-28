@@ -34,7 +34,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   const installmentPrice = (product.price / 3).toFixed(2).replace('.', ',');
 
   return (
-    <Card className="flex flex-col h-full overflow-hidden rounded-lg bg-white border border-neutral-200 shadow-sm hover:shadow-md transition-shadow duration-300">
+    <Card className="flex flex-col h-full overflow-hidden rounded-lg bg-card border-border shadow-sm hover:shadow-md transition-shadow duration-300">
       <div className="relative p-2">
         <Link href={`/products/${product.id}`} passHref className="block aspect-square w-full relative overflow-hidden rounded-md group">
           <Image
@@ -47,7 +47,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           />
         </Link>
         {hasDiscount && discountPercentage > 0 && (
-          <div className="absolute top-2 right-2 bg-red-600 text-white text-xs font-semibold px-2 py-1 rounded-md">
+          <div className="absolute top-2 right-2 bg-destructive text-destructive-foreground text-xs font-semibold px-2 py-1 rounded-md">
             {discountPercentage}% OFF
           </div>
         )}
@@ -64,9 +64,9 @@ export default function ProductCard({ product }: ProductCardProps) {
       </div>
       
       <CardContent className="p-4 flex-grow flex flex-col">
-        <p className="text-xs text-neutral-500 mb-0.5">{product.brand}</p>
+        <p className="text-xs text-muted-foreground mb-0.5">{product.brand}</p>
         <Link href={`/products/${product.id}`} passHref>
-          <h3 className="text-sm font-bold text-neutral-900 leading-tight hover:text-primary transition-colors mb-2 min-h-[40px]">
+          <h3 className="text-sm font-bold text-foreground leading-tight hover:text-primary transition-colors mb-2 min-h-[40px]">
             {product.name}
           </h3>
         </Link>
@@ -74,16 +74,16 @@ export default function ProductCard({ product }: ProductCardProps) {
         <div className="mt-auto space-y-1.5">
            <div className="flex items-baseline gap-2">
             {hasDiscount && product.originalPrice && (
-              <p className="text-sm text-neutral-400 line-through">
+              <p className="text-sm text-muted-foreground line-through">
                 R$ {product.originalPrice.toFixed(2).replace('.', ',')}
               </p>
             )}
-            <p className="text-xl font-bold text-red-600">
+            <p className="text-xl font-bold text-destructive">
               R$ {product.price.toFixed(2).replace('.', ',')}
             </p>
           </div>
-          <div className="flex items-center text-xs text-neutral-500">
-            <ShoppingCart className="h-3.5 w-3.5 mr-1.5 text-neutral-400" />
+          <div className="flex items-center text-xs text-muted-foreground">
+            <ShoppingCart className="h-3.5 w-3.5 mr-1.5 text-muted-foreground" />
             <span>3 x de R$ {installmentPrice} sem juros</span>
           </div>
         </div>
