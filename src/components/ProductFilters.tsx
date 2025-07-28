@@ -20,13 +20,12 @@ export interface Filters {
 }
 
 interface ProductFiltersProps {
-  initialFilters?: Partial<Filters>;
   onFilterChange: (filters: Filters) => void;
 }
 
 const ALL_CATEGORIES = mockCategories.map(cat => cat.name); // Keep static categories for now
 
-export default function ProductFilters({ initialFilters = {}, onFilterChange }: ProductFiltersProps) {
+export default function ProductFilters({ onFilterChange }: ProductFiltersProps) {
   const { products: allProducts, loading: productsLoading } = useProduct();
   const { getBrands, brands: contextBrands } = useBrand(); // Use useBrand
 
@@ -40,9 +39,9 @@ export default function ProductFilters({ initialFilters = {}, onFilterChange }: 
     return Math.max(...allProducts.map(p => p.price), 100);
   }, [allProducts, productsLoading]);
 
-  const [selectedCategories, setSelectedCategories] = useState<string[]>(initialFilters.categories || []);
-  const [priceRange, setPriceRange] = useState<[number, number]>(initialFilters.priceRange || [0, MAX_PRICE]);
-  const [selectedBrands, setSelectedBrands] = useState<string[]>(initialFilters.brands || []);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, MAX_PRICE]);
+  const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
   
   useEffect(() => {
     if (!productsLoading) {

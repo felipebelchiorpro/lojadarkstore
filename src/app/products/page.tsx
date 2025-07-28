@@ -147,7 +147,6 @@ export default function ProductsPage() {
         {/* Desktop Filters */}
         <aside className="hidden md:block w-full md:w-1/4 lg:w-1/5">
           <ProductFilters 
-            initialFilters={{categories: initialCategory ? [initialCategory] : []}}
             onFilterChange={handleFilterChange} 
           />
         </aside>
@@ -174,7 +173,6 @@ export default function ProductsPage() {
                         </SheetTrigger>
                     </div>
                     <ProductFilters 
-                        initialFilters={{categories: initialCategory ? [initialCategory] : []}}
                         onFilterChange={handleFilterChange} 
                     />
                    </div>
@@ -259,4 +257,3 @@ export default function ProductsPage() {
     </div>
   );
 }
-
