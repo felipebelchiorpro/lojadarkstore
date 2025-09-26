@@ -210,17 +210,24 @@ export const mainDropdownCategories: DropdownCategory[] = [
 export const mockPromotions: Promotion[] = [
   {
     id: 'promo1',
-    title: 'Combo Ganho de Massa!',
-    description: 'Leve Whey + Creatina com 20% de desconto!',
+    title: 'Combo Monstro: Whey + Creatina',
+    description: 'Leve o combo essencial para ganho de massa com 20% de desconto e eleve seu treino!',
     imageUrl: 'https://placehold.co/1200x400.png',
     link: '/products?category=GANHO%20DE%20MASSA',
   },
   {
     id: 'promo2',
-    title: 'Frete Grátis Acima de R$199',
-    description: 'Aproveite o frete grátis para todo o Brasil.',
+    title: 'Queima Total: Termogênicos em Oferta',
+    description: 'Acelere seus resultados com nossa seleção de termogênicos. Até 15% OFF!',
     imageUrl: 'https://placehold.co/1200x400.png',
-    link: '/products',
+    link: '/products?category=EMAGRECIMENTO',
+  },
+  {
+    id: 'promo3',
+    title: 'Lançamento Pré-Treino Nuclear',
+    description: 'Experimente a nova fórmula para uma explosão de energia e foco nos seus treinos.',
+    imageUrl: 'https://placehold.co/1200x400.png',
+    link: '/products/5',
   },
 ];
 
@@ -433,4 +440,3 @@ export const biDashboardStates = [
     { id: "RO", name: "Rondônia" }, { id: "RR", name: "Roraima" }, { id: "SC", name: "Santa Catarina" },
     { id: "SP", name: "São Paulo" }, { id: "SE", name: "Sergipe" }, { id: "TO", name: "Tocantins" }
 ];
-
