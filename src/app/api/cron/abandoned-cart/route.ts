@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
 import { triggerAbandonedCartWebhook } from '@/services/webhookTriggerService';
 
+export const dynamic = 'force-dynamic';
+
 // This route should be called periodically (e.g., every 10-30 mins)
 export async function GET(request: Request) {
     // Optional: secure this route with a secret key in params
