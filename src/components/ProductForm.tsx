@@ -351,7 +351,7 @@ export default function ProductForm({ product, onSubmitProduct, open, onOpenChan
                                 <div className="col-span-1 space-y-2">
                                     <Label>Foto de Capa</Label>
                                     <div className="relative aspect-square border-2 border-dashed rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-muted/50 transition bg-background overflow-hidden group">
-                                        <Input type="file" accept="image/*" onChange={handleImageChange} className="absolute inset-0 opacity-0 cursor-pointer z-10" />
+                                        <Input type="file" accept="image/png, image/jpeg, image/jpg, image/webp" onChange={handleImageChange} className="absolute inset-0 opacity-0 cursor-pointer z-50" />
                                         {imagePreview ? (
                                             <Image src={imagePreview} alt="Capa" layout="fill" objectFit="cover" />
                                         ) : (
@@ -367,7 +367,7 @@ export default function ProductForm({ product, onSubmitProduct, open, onOpenChan
                                 <div className="col-span-1 space-y-2">
                                     <Label>Hover (Opcional)</Label>
                                     <div className="relative aspect-square border-2 border-dashed rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-muted/50 transition bg-background overflow-hidden group">
-                                        <Input type="file" accept="image/*" onChange={handleHoverImageChange} className="absolute inset-0 opacity-0 cursor-pointer z-10" />
+                                        <Input type="file" accept="image/png, image/jpeg, image/jpg, image/webp" onChange={handleHoverImageChange} className="absolute inset-0 opacity-0 cursor-pointer z-50" />
                                         {hoverImagePreview ? (
                                             <Image src={hoverImagePreview} alt="Hover" layout="fill" objectFit="cover" />
                                         ) : (
@@ -392,7 +392,7 @@ export default function ProductForm({ product, onSubmitProduct, open, onOpenChan
                                             </div>
                                         ))}
                                         <div className="relative aspect-square border-2 border-dashed rounded-md flex items-center justify-center cursor-pointer hover:bg-muted/50 transition">
-                                            <Input type="file" multiple accept="image/*" onChange={handleGalleryUpload} className="absolute inset-0 opacity-0 cursor-pointer" />
+                                            <Input type="file" multiple accept="image/png, image/jpeg, image/jpg, image/webp" onChange={handleGalleryUpload} className="absolute inset-0 opacity-0 cursor-pointer" />
                                             <Plus className="text-muted-foreground" />
                                         </div>
                                     </div>
@@ -470,7 +470,7 @@ export default function ProductForm({ product, onSubmitProduct, open, onOpenChan
                                                     />
                                                     <div className="flex items-center gap-2">
                                                         <div className="relative w-8 h-8 rounded-md bg-muted flex items-center justify-center overflow-hidden border cursor-pointer hover:opacity-80">
-                                                            <Input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer" onChange={(e) => handleColorImageUpload(idx, e.target.files)} />
+                                                            <Input type="file" accept="image/png, image/jpeg, image/jpg, image/webp" className="absolute inset-0 opacity-0 cursor-pointer" onChange={(e) => handleColorImageUpload(idx, e.target.files)} />
                                                             {item.image ? (
                                                                 <Image src={item.image} alt={item.color} layout="fill" objectFit="cover" />
                                                             ) : <Upload size={14} className="text-muted-foreground" />}
