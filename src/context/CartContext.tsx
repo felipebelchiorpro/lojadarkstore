@@ -19,6 +19,18 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 const CART_STORAGE_KEY = 'darkstore-cart';
 const CART_ID_KEY = 'darkstore-cart-id';
 
+// Helper to generate UUID safely in all environments (including HTTP/Mobile)
+const generateUUID = () => {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+    const r = Math.random() * 16 | 0;
+    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+};
+
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [cartId, setCartId] = useState<string>('');
@@ -38,7 +50,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     // 2. Initialize Cart ID
     let id = localStorage.getItem(CART_ID_KEY);
     if (!id) {
-      id = crypto.randomUUID();
+      id = generateUUID();
       localStorage.setItem(CART_ID_KEY, id);
     }
     setCartId(id);

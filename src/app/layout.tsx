@@ -1,15 +1,28 @@
 
 import type { Metadata } from 'next';
+import { Inter, Space_Grotesk } from 'next/font/google';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from '@/context/AuthContext';
-import { CustomerAuthProvider } from '@/context/CustomerAuthContext'; // Added
+import { CustomerAuthProvider } from '@/context/CustomerAuthContext';
 import { CartProvider } from '@/context/CartContext';
 import { BrandProvider } from '@/context/BrandContext';
 import { ProductProvider } from '@/context/ProductContext';
-import { PromotionProvider } from '@/context/PromotionContext'; // Added
+import { PromotionProvider } from '@/context/PromotionContext';
 import { FavoritesProvider } from '@/context/FavoritesContext';
 import ConditionalLayout from '@/components/layout/ConditionalLayout';
+
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap',
+});
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ['latin'],
+  variable: '--font-space-grotesk',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: 'DarkStore Suplementos',
@@ -23,16 +36,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" className="dark">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet" />
-        <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet" />
-      </head>
+    <html lang="pt-BR" className={`${inter.variable} ${spaceGrotesk.variable} dark`}>
       <body className="font-body antialiased bg-background text-foreground min-h-screen flex flex-col">
         <AuthProvider>
-          <CustomerAuthProvider> {/* Added CustomerAuthProvider */}
+          <CustomerAuthProvider>
             <BrandProvider>
               <ProductProvider>
                 <PromotionProvider>

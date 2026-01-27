@@ -48,6 +48,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             alt={product.name}
             layout="fill"
             objectFit="cover"
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
             className={`transition-all duration-500 ease-in-out ${product.hoverImageUrl ? 'group-hover:opacity-0' : 'group-hover:scale-105'}`}
           />
 

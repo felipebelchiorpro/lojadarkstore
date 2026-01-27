@@ -8,6 +8,7 @@ import type { ReactNode } from 'react';
 export default function ConditionalLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const isDashboardRoute = pathname.startsWith('/dashboard');
+  const isHomePage = pathname === '/';
 
   if (isDashboardRoute) {
     // For dashboard routes, DashboardLayout (passed as children) takes full control.
@@ -18,7 +19,7 @@ export default function ConditionalLayout({ children }: { children: ReactNode })
   return (
     <>
       <Header />
-      <main className="flex-grow container mx-auto px-4 py-8">
+      <main className={`flex-grow ${!isHomePage && !isDashboardRoute ? 'container mx-auto px-4 py-8' : ''}`}>
         {children}
       </main>
       <Footer />

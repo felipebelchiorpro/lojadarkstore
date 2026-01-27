@@ -32,7 +32,7 @@ export function Banner({ promotions }: BannerProps) {
   return (
     <Carousel
       plugins={[plugin.current]}
-      className="w-full rounded-lg overflow-hidden border border-border/40 shadow-none"
+      className="w-full overflow-hidden shadow-none"
       onMouseEnter={plugin.current.stop}
       onMouseLeave={plugin.current.reset}
       opts={{ loop: true }}
@@ -50,6 +50,8 @@ export function Banner({ promotions }: BannerProps) {
                   layout="fill"
                   objectFit="cover"
                   className="brightness-75"
+                  priority={true} // Priority to LCP element
+                  sizes="100vw"
                   data-ai-hint="fitness promotion"
                 />
                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/50 p-6 text-center">

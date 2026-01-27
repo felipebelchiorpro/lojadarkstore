@@ -1,57 +1,63 @@
 "use client";
 
 import React from 'react';
+import { Truck, Barcode, MessageCircle, CreditCard, RefreshCw, ShieldCheck } from 'lucide-react';
 
 interface InfoItemProps {
-  emoji: string;
+  icon: React.ReactNode;
   title: string;
-  subtitle: string;
+  subtitle?: string;
+  linkText?: string;
+  linkUrl?: string;
 }
 
-const InfoItem: React.FC<InfoItemProps> = ({ emoji, title, subtitle }) => {
-  return (
-    <div className="flex items-center space-x-3 md:space-x-4 p-3">
-      <div className="flex-shrink-0 text-2xl md:text-4xl">
-        {emoji}
-      </div>
-      <div>
-        <h3 className="text-xs md:text-base font-bold text-foreground">{title}</h3>
-        <p className="text-[10px] sm:text-xs md:text-sm text-muted-foreground">{subtitle}</p>
-      </div>
-    </div>
-  );
-};
-
-const infoItemsData: InfoItemProps[] = [
-  {
-    emoji: '🛵',
-    title: 'Entrega e Retirada',
-    subtitle: 'Caconde e região',
-  },
-  {
-    emoji: '💳',
-    title: 'Pagamento Facilitado',
-    subtitle: 'Em até 3x sem Juros',
-  },
-  {
-    emoji: '🛡️',
-    title: 'Sua Compra Segura',
-    subtitle: 'Site 100% Protegido',
-  },
-  {
-    emoji: '💬',
-    title: 'Atendimento Exclusivo',
-    subtitle: 'Suporte via WhatsApp',
-  },
-];
-
 export default function InfoBar() {
+  const infoItemsData: InfoItemProps[] = [
+    {
+      icon: <Truck size={24} strokeWidth={2} />,
+      title: 'Entrega e Retirada',
+      subtitle: 'Caconde e região',
+    },
+    {
+      icon: <CreditCard size={24} strokeWidth={2} />,
+      title: 'Pagamento Facilitado',
+      subtitle: 'Em até 3x sem Juros',
+    },
+    {
+      icon: <ShieldCheck size={24} strokeWidth={2} />,
+      title: 'Sua Compra Segura',
+      subtitle: 'Site 100% Protegido',
+    },
+    {
+      icon: <MessageCircle size={24} strokeWidth={2} />,
+      title: 'Atendimento Exclusivo',
+      subtitle: 'Suporte via WhatsApp',
+    },
+  ];
+
   return (
-    <section className="bg-background py-6 sm:py-8 border-y border-border/40">
-      <div className="container mx-auto">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-6 divide-y sm:divide-y-0 sm:divide-x divide-border/40">
+    <section className="bg-background py-6 overflow-hidden">
+      <div className="container mx-auto px-4">
+        {/* Horizontal scroll on mobile, grid/flex on desktop */}
+        <div className="flex flex-nowrap overflow-x-auto gap-4 md:grid md:grid-cols-2 lg:flex lg:flex-nowrap lg:justify-between pb-4 lg:pb-0 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+          <style jsx>{`
+            div::-webkit-scrollbar {
+              display: none;
+            }
+          `}</style>
           {infoItemsData.map((item, index) => (
-            <InfoItem key={index} emoji={item.emoji} title={item.title} subtitle={item.subtitle} />
+            <div key={index} className="flex-shrink-0">
+              <div className="flex items-center bg-card rounded-full p-1.5 pr-6 shadow-sm w-[320px] lg:w-auto h-20 border border-border">
+                <div className="min-h-[50px] min-w-[50px] h-[50px] w-[50px] flex-shrink-0 bg-primary text-primary-foreground flex items-center justify-center rounded-full mr-3">
+                  {item.icon}
+                </div>
+                <div className="flex flex-col justify-center h-full">
+                  <h3 className="text-xs sm:text-sm font-bold text-card-foreground leading-tight">{item.title}</h3>
+                  {item.subtitle && <p className="text-[10px] sm:text-xs text-muted-foreground leading-tight mt-0.5">{item.subtitle}</p>}
+                  {item.linkText && <span className="text-[10px] sm:text-xs text-primary font-medium underline mt-0.5 cursor-pointer">{item.linkText}</span>}
+                </div>
+              </div>
+            </div>
           ))}
         </div>
       </div>
