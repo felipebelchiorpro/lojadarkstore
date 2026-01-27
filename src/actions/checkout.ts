@@ -3,16 +3,33 @@
 import { MercadoPagoConfig, Preference } from 'mercadopago';
 import { triggerOrderCreatedWebhook } from '@/services/webhookTriggerService';
 import { incrementCouponUsage } from '@/actions/coupons';
-
-const client = new MercadoPagoConfig({ accessToken: process.env.MP_ACCESS_TOKEN || '' });
+import { supabaseAdmin } from '@/lib/supabaseAdmin';
 
 export async function processCheckout(cartItems: any[], total: number, phone?: string) {
     console.log("Processing checkout for", cartItems.length, "items", "Phone:", phone);
 
-    if (!process.env.MP_ACCESS_TOKEN) {
-        console.error("MP_ACCESS_TOKEN not found");
+    // 1. Try to fetch Access Token from DB
+    let accessToken = process.env.MP_ACCESS_TOKEN;
+
+    try {
+        const { data: settings } = await supabaseAdmin
+            .from('integration_settings')
+            .select('mercado_pago_access_token')
+            .single();
+
+        if (settings?.mercado_pago_access_token) {
+            accessToken = settings.mercado_pago_access_token;
+        }
+    } catch (error) {
+        console.error("Failed to fetch payment settings, falling back to ENV", error);
+    }
+
+    if (!accessToken) {
+        console.error("MP_ACCESS_TOKEN not found in DB or ENV");
         return { success: false, message: "Erro de configuração de pagamento." };
     }
+
+    const client = new MercadoPagoConfig({ accessToken: accessToken });
 
     try {
         const preference = new Preference(client);

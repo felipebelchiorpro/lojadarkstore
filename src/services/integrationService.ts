@@ -28,8 +28,12 @@ export const updateIntegrationSettingsService = async (settings: Partial<Integra
     if (existing) {
         const { error } = await supabase
             .from('integration_settings')
-            .update(settings)
-            .eq('id', existing.id);
+            .update({
+                status_abandoned_cart: settings.status_abandoned_cart,
+                auth_token: settings.auth_token,
+                mercado_pago_public_key: settings.mercado_pago_public_key,
+                mercado_pago_access_token: settings.mercado_pago_access_token
+            }).eq('id', existing.id);
         if (error) throw error;
     } else {
         const { error } = await supabase

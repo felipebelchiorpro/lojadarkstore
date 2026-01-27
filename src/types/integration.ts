@@ -6,6 +6,8 @@ export interface IntegrationSettings {
     status_order_created: boolean;
     status_abandoned_cart: boolean;
     auth_token?: string;
+    mercado_pago_public_key?: string;
+    mercado_pago_access_token?: string;
     updated_at?: string;
 }
 

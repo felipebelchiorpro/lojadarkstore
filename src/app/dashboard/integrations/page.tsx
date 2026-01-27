@@ -37,9 +37,10 @@ export default function IntegrationsPage() {
                 id: '',
                 webhook_order_created: '',
                 webhook_abandoned_cart: '',
-                status_order_created: false,
                 status_abandoned_cart: false,
-                auth_token: ''
+                auth_token: '',
+                mercado_pago_public_key: '',
+                mercado_pago_access_token: ''
             });
         }
         setLoading(false);
@@ -54,7 +55,9 @@ export default function IntegrationsPage() {
                 webhook_abandoned_cart: settings.webhook_abandoned_cart,
                 status_order_created: settings.status_order_created,
                 status_abandoned_cart: settings.status_abandoned_cart,
-                auth_token: settings.auth_token
+                auth_token: settings.auth_token,
+                mercado_pago_public_key: settings.mercado_pago_public_key,
+                mercado_pago_access_token: settings.mercado_pago_access_token
             });
             toast({ title: "Sucesso", description: "Configurações salvas!" });
         } catch (error) {
@@ -103,6 +106,7 @@ export default function IntegrationsPage() {
             <Tabs defaultValue="webhooks" className="max-w-4xl">
                 <TabsList>
                     <TabsTrigger value="webhooks" className="flex items-center gap-2"><Webhook className="h-4 w-4" /> Webhooks</TabsTrigger>
+                    <TabsTrigger value="payment" className="flex items-center gap-2">Pagamento</TabsTrigger>
                     {/* Future tabs: Email Marketing, Pixels, etc. */}
                 </TabsList>
 
@@ -215,6 +219,52 @@ export default function IntegrationsPage() {
                         </CardFooter>
                     </Card>
 
+                </TabsContent>
+
+                <TabsContent value="payment" className="space-y-4 mt-4">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Mercado Pago</CardTitle>
+                            <CardDescription>
+                                Configure suas credenciais do Mercado Pago para receber pagamentos.
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <div className="grid w-full gap-2">
+                                <Label htmlFor="mpPublicKey">Public Key (Chave Pública)</Label>
+                                <Input
+                                    id="mpPublicKey"
+                                    placeholder="APP_USR-..."
+                                    value={settings?.mercado_pago_public_key || ''}
+                                    onChange={(e) => setSettings(s => s ? ({ ...s, mercado_pago_public_key: e.target.value }) : null)}
+                                />
+                            </div>
+                            <div className="grid w-full gap-2">
+                                <Label htmlFor="mpAccessToken">Access Token (Chave Secreta)</Label>
+                                <Input
+                                    id="mpAccessToken"
+                                    type="password"
+                                    placeholder="APP_USR-..."
+                                    value={settings?.mercado_pago_access_token || ''}
+                                    onChange={(e) => setSettings(s => s ? ({ ...s, mercado_pago_access_token: e.target.value }) : null)}
+                                />
+                                <p className="text-xs text-muted-foreground">Esta chave é mantida em segurança e usada apenas no servidor.</p>
+                            </div>
+                        </CardContent>
+                        <CardFooter className="flex justify-end pt-4">
+                            <Button onClick={handleSave} disabled={isSaving} className="w-full sm:w-auto">
+                                {isSaving ? (
+                                    <>
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Salvando...
+                                    </>
+                                ) : (
+                                    <>
+                                        <Save className="mr-2 h-4 w-4" /> Salvar Configurações
+                                    </>
+                                )}
+                            </Button>
+                        </CardFooter>
+                    </Card>
                 </TabsContent>
             </Tabs>
         </div>
