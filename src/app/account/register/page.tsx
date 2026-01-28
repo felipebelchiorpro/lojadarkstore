@@ -115,6 +115,9 @@ export default function RegisterPage() {
                             {form.formState.errors.phone && (
                                 <p className="text-sm text-destructive font-medium">{form.formState.errors.phone.message}</p>
                             )}
+                            <p className="text-xs text-muted-foreground mt-1">
+                                Usaremos este número para enviar atualizações do seu pedido via WhatsApp.
+                            </p>
                         </div>
 
                         <div className="space-y-2">
