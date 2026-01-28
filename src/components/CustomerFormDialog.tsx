@@ -14,7 +14,7 @@ import { useEffect } from "react";
 const customerSchema = z.object({
   name: z.string().min(2, { message: "O nome deve ter pelo menos 2 caracteres." }),
   email: z.string().email({ message: "Por favor, insira um email válido." }),
-  phone: z.string().optional(),
+  phone: z.string().min(10, { message: "Telefone deve ter no mínimo 10 dígitos (DDD + número)." }),
 });
 
 type CustomerFormValues = z.infer<typeof customerSchema>;

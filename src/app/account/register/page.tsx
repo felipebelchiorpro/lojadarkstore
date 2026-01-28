@@ -18,7 +18,7 @@ const registerSchema = z.object({
     email: z.string().email("Por favor, insira um e-mail válido."),
     password: z.string().min(6, "A senha deve ter pelo menos 6 caracteres."),
     confirmPassword: z.string(),
-    phone: z.string().optional(),
+    phone: z.string().min(10, "Telefone inválido. Inclua o DDD."),
 }).refine((data) => data.password === data.confirmPassword, {
     message: "As senhas não coincidem",
     path: ["confirmPassword"],
@@ -105,13 +105,16 @@ export default function RegisterPage() {
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="phone">Telefone (Opcional)</Label>
+                            <Label htmlFor="phone">WhatsApp (Obrigatório)</Label>
                             <Input
                                 id="phone"
-                                placeholder="(00) 00000-0000"
+                                placeholder="(11) 99999-9999"
                                 {...form.register("phone")}
-                                className="bg-background/50 focus:border-primary"
+                                className={`bg-background/50 ${form.formState.errors.phone ? "border-destructive" : "focus:border-primary"}`}
                             />
+                            {form.formState.errors.phone && (
+                                <p className="text-sm text-destructive font-medium">{form.formState.errors.phone.message}</p>
+                            )}
                         </div>
 
                         <div className="space-y-2">

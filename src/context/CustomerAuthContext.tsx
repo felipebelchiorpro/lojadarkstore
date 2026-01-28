@@ -11,10 +11,10 @@ interface CustomerAuthContextType {
   customer: CustomerUser | null;
   customerLogin: (email: string, password?: string) => Promise<void>;
   customerLogout: () => Promise<void>;
-  customerRegister: (data: { name: string; email: string; password: string; phone?: string }) => Promise<void>;
+  customerRegister: (data: { name: string; email: string; password: string; phone: string }) => Promise<void>;
   customerAuthLoading: boolean;
   getAllRegisteredCustomers: () => CustomerUser[];
-  registerCustomerByAdmin: (data: { name: string; email: string; phone?: string }) => Promise<boolean>;
+  registerCustomerByAdmin: (data: { name: string; email: string; phone: string }) => Promise<boolean>;
 }
 
 const CustomerAuthContext = createContext<CustomerAuthContextType | undefined>(undefined);
@@ -52,7 +52,7 @@ export const CustomerAuthProvider = ({ children }: { children: ReactNode }) => {
           email: session.user.email || '',
           name: session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Cliente',
           registeredAt: session.user.created_at,
-          phone: session.user.phone
+          phone: session.user.phone || session.user.user_metadata?.phone
         };
         setCustomer(user);
         setIsCustomerAuthenticated(true);
@@ -115,7 +115,7 @@ export const CustomerAuthProvider = ({ children }: { children: ReactNode }) => {
     return [...allCustomers].sort((a, b) => (a.name || "").localeCompare(b.name || ""));
   }, [allCustomers]);
 
-  const registerCustomerByAdmin = useCallback(async (data: { name: string; email: string; phone?: string }): Promise<boolean> => {
+  const registerCustomerByAdmin = useCallback(async (data: { name: string; email: string; phone: string }): Promise<boolean> => {
     // This remains a "Mock" feature for now as creating users in Supabase requires Service Role or SignUp (which logs you in).
     // Keeping local logic for display purposes in Admin Panel.
     const { name, email, phone } = data;
@@ -153,7 +153,7 @@ export const CustomerAuthProvider = ({ children }: { children: ReactNode }) => {
   }, [allCustomers, persistAllCustomers, toast]);
 
 
-  const customerRegister = async (data: { name: string; email: string; password: string; phone?: string }) => {
+  const customerRegister = async (data: { name: string; email: string; password: string; phone: string }) => {
     const { email, password, name, phone } = data;
 
     // 1. Sign up with Supabase
