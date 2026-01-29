@@ -1,19 +1,16 @@
-
-"use client";
-
-import CustomerLoginForm from '@/components/CustomerLoginForm'; // Changed to CustomerLoginForm
-import { useCustomerAuth } from '@/context/CustomerAuthContext'; // Changed to useCustomerAuth
+import CustomerLoginForm from '@/components/CustomerLoginForm';
+import { useCustomerAuth } from '@/context/CustomerAuthContext';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, Suspense } from 'react';
 
-export default function CustomerLoginPage() { // Renamed for clarity
-  const { isCustomerAuthenticated, customerAuthLoading } = useCustomerAuth(); // Changed to useCustomerAuth
+function LoginContent() {
+  const { isCustomerAuthenticated, customerAuthLoading } = useCustomerAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
 
   useEffect(() => {
     if (!customerAuthLoading && isCustomerAuthenticated) {
-      const redirectUrl = searchParams.get('redirect') || '/account/dashboard'; // Default redirect for customers
+      const redirectUrl = searchParams.get('redirect') || '/account/dashboard';
       router.replace(redirectUrl);
     }
   }, [isCustomerAuthenticated, customerAuthLoading, router, searchParams]);
@@ -21,7 +18,7 @@ export default function CustomerLoginPage() { // Renamed for clarity
   if (customerAuthLoading) {
     return <div className="flex items-center justify-center min-h-[calc(100vh-10rem)]"><p>Carregando...</p></div>;
   }
-  
+
   if (isCustomerAuthenticated) {
     return <div className="flex items-center justify-center min-h-[calc(100vh-10rem)]"><p>Redirecionando...</p></div>;
   }
@@ -30,5 +27,13 @@ export default function CustomerLoginPage() { // Renamed for clarity
     <div className="flex flex-col items-center justify-center min-h-[calc(100vh-15rem)] py-12">
       <CustomerLoginForm />
     </div>
+  );
+}
+
+export default function CustomerLoginPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center min-h-[calc(100vh-10rem)]"><p>Carregando...</p></div>}>
+      <LoginContent />
+    </Suspense>
   );
 }
