@@ -533,20 +533,65 @@ export default function ProductForm({ product, onSubmitProduct, open, onOpenChan
                                 </div>
                             )}
 
-                            <div className="flex items-center pt-4">
-                                <Controller
-                                    name="isNewRelease"
-                                    control={form.control}
-                                    render={({ field }) => (
+                            <div className="flex flex-col gap-3 pt-4 border-t">
+                                <h4 className="font-semibold text-sm">Tags e Visibilidade</h4>
+                                <div className="flex flex-wrap gap-6">
+                                    <div className="flex items-center">
+                                        <Controller
+                                            name="isNewRelease"
+                                            control={form.control}
+                                            render={({ field }) => (
+                                                <Checkbox
+                                                    id="isNewRelease"
+                                                    checked={field.value}
+                                                    onCheckedChange={field.onChange}
+                                                    className="mr-2"
+                                                />
+                                            )}
+                                        />
+                                        <Label htmlFor="isNewRelease" className="font-normal cursor-pointer">Novo Lançamento</Label>
+                                    </div>
+
+                                    <div className="flex items-center">
                                         <Checkbox
-                                            id="isNewRelease"
-                                            checked={field.value}
-                                            onCheckedChange={field.onChange}
+                                            id="isOutlet"
+                                            checked={!!form.watch("originalPrice") && (form.watch("originalPrice") || 0) > form.watch("price")}
+                                            onCheckedChange={(checked) => {
+                                                if (checked) {
+                                                    // Auto-suggest a higher original price + 20% if not set
+                                                    const currentPrice = form.getValues("price");
+                                                    if (!form.getValues("originalPrice") || form.getValues("originalPrice")! <= currentPrice) {
+                                                        setValue("originalPrice", Number((currentPrice * 1.2).toFixed(2)));
+                                                    }
+                                                } else {
+                                                    setValue("originalPrice", null);
+                                                }
+                                            }}
                                             className="mr-2"
                                         />
-                                    )}
-                                />
-                                <Label htmlFor="isNewRelease" className="font-normal cursor-pointer">Marcar como "Novo Lançamento"</Label>
+                                        <Label htmlFor="isOutlet" className="font-normal cursor-pointer">Outlet (Oferta)</Label>
+                                    </div>
+
+                                    <div className="flex items-center">
+                                        <Checkbox
+                                            id="isKit"
+                                            checked={categories.find(c => c.id === form.watch("category"))?.name?.toLowerCase().includes("kit")}
+                                            onCheckedChange={(checked) => {
+                                                if (checked) {
+                                                    const kitCategory = categories.find(c => c.name.toLowerCase().includes("kit") || c.name.toLowerCase().includes("kits"));
+                                                    if (kitCategory) {
+                                                        setValue("category", kitCategory.id);
+                                                    } else {
+                                                        // Fallback if no category named Kit exists yet (should create one ideally)
+                                                        alert("Categoria 'Kits' não encontrada. Crie-a primeiro.");
+                                                    }
+                                                }
+                                            }}
+                                            className="mr-2"
+                                        />
+                                        <Label htmlFor="isKit" className="font-normal cursor-pointer">É um Kit?</Label>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 

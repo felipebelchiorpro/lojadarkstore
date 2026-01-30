@@ -60,8 +60,21 @@ function ProductsContent() {
       );
     }
 
+    // Explicit check for "on-sale" filter from URL or custom filter state
+    // Currently `filters` doesn't have `onSale` bool, but we can check the URL param or if we add it.
+    // The user linked /products?filter=on-sale in logic.
+    const isOutletFilter = searchParams.get('filter') === 'on-sale';
+    if (isOutletFilter) {
+      result = result.filter(p => p.originalPrice && p.originalPrice > p.price);
+    }
+
     if (filters.categories.length > 0) {
-      result = result.filter(product => filters.categories.includes(product.category));
+      result = result.filter(product =>
+        filters.categories.some(cat =>
+          product.category.toLowerCase() === cat.toLowerCase() ||
+          (cat.toUpperCase() === 'KITS' && product.category.toLowerCase().includes('kit')) // Robust check for Kits
+        )
+      );
     }
     if (filters.brands.length > 0) {
       result = result.filter(product => filters.brands.includes(product.brand));
